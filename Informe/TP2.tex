@@ -35,18 +35,18 @@ señas americano. El link al dataset es el siguiente https://www.kaggle.com/data
 
 \subsection{Análisis exploratorio de datos}
 
-(Acá basicamente narramos lo que hicimos en la consigna 1)
-
-deje este fragmento de codigo porque lo quierp usar
+\section{Modelo}
+Realizando distintas pruebas, notamos que utilizando distintas cantidades de pixeles, a medida que el numero de vecinos incrementa
+la performance decae, siendo el número ideal de vecinos exactamente 1.
 
 \begin{figure}[ht!]
 	\begin{subfigure}{0.5\textwidth}
-		\includegraphics[width=0.9\linewidth]{3pixeles.png} 
+		\includegraphics[width=0.9\linewidth]{50pixeles.png} 
 		\caption{Los 3 pixeles con mayor varianza}
 		\label{fig:subfig1}
 	\end{subfigure}
 	\begin{subfigure}{0.5\textwidth}
-		\includegraphics[width=0.9\linewidth]{50pixeles.png}
+		\includegraphics[width=0.9\linewidth]{3pixeles.png}
 		\caption{50 pixeles en una zona de varianza media}
 		\label{fig:subfig2}
 	\end{subfigure}
@@ -54,7 +54,8 @@ deje este fragmento de codigo porque lo quierp usar
 	\label{fig:subfigs}
 \end{figure}
 
-
+Sin embargo, encontramos que cuando tenemos solo un pixel. Sin importar si este es significativo o no, la performance del modelo tiende a aumentar a medida
+que el numero de vecinos es mayor. En este caso, a partir de los gráficos, pareciera ser que k = 9 sería un buen número.
 
 \begin{figure}[ht!]
 	\begin{subfigure}{0.5\textwidth}
