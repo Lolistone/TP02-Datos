@@ -23,22 +23,22 @@ letras : dict = {'0' : 'A', 1 : 'B', 2 : 'C', 3 : 'D', 4 : 'E', 5 : 'F', 6 : 'G'
                  21: 'V', 22 : 'W', 23 : 'X', 24: 'Y', 25 : 'Z'}
 
 # Separo la columna con los label.
-df_label = df_sign['label']
-df_sign = df_sign.drop(['label'], axis=1)
+Y = df_sign['label']
+X = df_sign.drop(['label'], axis=1)
 
 # Convierto en array el dataset.
-X = df_sign.values
+X = X.values
 
-# Genero una 'Preview' del dataset para ver como esta compuesto.
+# Genero una 'Preview' del dataset para ver como son las imagenes.
 fig, axe = plt.subplots(3,3)
 fig.suptitle('Preview del dataset', size = 14, x= 0.5, y = 0.995)
-plt.subplots_adjust(hspace= 0.3, wspace = -0.2)
+plt.subplots_adjust(hspace= 0.4, wspace = -0.2)
 
 label : int = 0
 for i in range(3):
     for j in range(3):
         axe[i][j].imshow(X[label].reshape(28,28), cmap='gray')
-        axe[i][j].set_title('letra: ' + letras[df_label[label]])
+        axe[i][j].set_title('letra: ' + letras[Y[label]])
         label += 1
 
 # Elimino los ticks de todos los subplot.
@@ -46,10 +46,80 @@ for ax in axe:
     for i in range(3):
         ax[i].set_xticks([])
         ax[i].set_yticks([])
+
+# Aca me falta el savefig para guardar las figuras, así las agregamos al principio del informe
+
+# Elimino las variables que no uso.
+del X, Y
+del label
+del i, j
+del ax, axe
+
+# (Esto iria en el informe, no aca, pero mientras tanto)
+# Los atributos que a nuestro criterio, son mas relevantes para predecir una seña son aquellos
+# correspondientes a los pixeles 'centrales' dado que dan a conocer mayor información acerca de la mano.
+# Si hay atributos que a simple vista podrían descartarse son los pixeles del fondo. Sin embargo, habria
+# que tener cierto cuidado pues no todas las imagenes poseen los mismo pixeles de fondo.}
+
+# Filtro en el dataset las letras, L, E y M.
+Xl = df_sign[df_sign['label'] == 11] 
+Xm = df_sign[df_sign['label'] == 12] 
+Xe = df_sign[df_sign['label'] == 4]
+
+Yl = Xl['label']
+Ym = Xm['label']
+Ye = Xe['label']
+
+# Elimino la columna label y convierto en array
+Xl = Xl.drop(['label'], axis = 1).values
+Xm = Xm.drop(['label'], axis = 1).values
+Xe = Xe.drop(['label'], axis = 1).values
+
+# Comparamos la letra E contra la L.
+fig, axe = plt.subplots(2,3)
+fig.suptitle('Letra E vs L', size = 14, x= 0.5, y = 0.995)
+plt.subplots_adjust(hspace= 0.4, wspace = -0.2)
+
+for j in range(3):
+    axe[0][j].imshow(Xl[j].reshape(28,28), cmap='gray')
+    axe[0][j].set_title('letra: L')
+    
+for j in range(3):
+    axe[1][j].imshow(Xe[j].reshape(28,28), cmap='gray')
+    axe[1][j].set_title('letra: E')
+
+# Elimino los ticks de todos los subplot.
+for ax in axe:
+    for i in range(3):
+        ax[i].set_xticks([])
+        ax[i].set_yticks([])
         
-# Ahora que entiendo el dataset, puedo comenzar el analisis exploratorio.
+# Ahora, comparo la E con la M
+fig, axe = plt.subplots(2,3)
+fig.suptitle('Letra E vs L', size = 14, x= 0.5, y = 0.995)
+plt.subplots_adjust(hspace= 0.4, wspace = -0.2)
 
+for j in range(3):
+    axe[0][j].imshow(Xm[j].reshape(28,28), cmap='gray')
+    axe[0][j].set_title('letra: M')
+    
+for j in range(3):
+    axe[1][j].imshow(Xe[j].reshape(28,28), cmap='gray')
+    axe[1][j].set_title('letra: E')
+
+# Elimino los ticks de todos los subplot.
+for ax in axe:
+    for i in range(3):
+        ax[i].set_xticks([])
+        ax[i].set_yticks([])
         
-
-
+# (Otra vez, esto va al informe pero mientras lo dejo documentado aca)
+# Viendo los dos graficos, se puede ver bien claro que hay letras que se parecen mucho entre si.
+# En este caso, la letra E y la letra M son muy similares entre si. Pero, son bastante diferentes 
+# a la letra L.
+        
+# Elimino las variables que no utilizo.
+del Xl
+del Xm
+del Xe
 
