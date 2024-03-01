@@ -254,9 +254,9 @@ X_train, X_test, y_train, y_test = train_test_split(X, Y, test_size = 0.2, shuff
 clf = KNeighborsClassifier(n_neighbors=3)
 
 # Elijo que pixeles usar. Obviamente, teniendo encuenta la lista 'maxima_varianza'
-
-pixeles = [[300, 273, 245], [301, 298, 272], [32, 70, 30]]
-for i in range(3):
+pixeles = [[300, 273, 245], [301, 298, 272], [270, 327, 328]]
+resultados = []
+for i in range(len(pixeles)):
     X_train_1 = X_train.iloc[:, pixeles[i]]
     X_test_1 = X_test.iloc[:,pixeles[i]]
 
@@ -265,9 +265,10 @@ for i in range(3):
     
     # Evaluamos la exactitud.
     print("Test set accuracy: {:.2f}".format(clf.score(X_test_1, y_test)))
+    
+    # Guardo los resultados
+    resultados += [round(clf.score(X_test_1, y_test), 2)]
 
-
-# Esta prueba, nos muestra claramente que 3 pixeles son mas que suficientes para
-# tener un modelo com gran exactitud.
+# Utilizando los pixeles de mayor varianza, obtenemos resultados realmente buenos.
 
 # Para la última parte, haria el for probando valores distintos de k
