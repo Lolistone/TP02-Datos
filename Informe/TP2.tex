@@ -1,0 +1,64 @@
+\documentclass[10pt,a4paper]{article}
+
+\input{AEDmacros}
+\usepackage{caratula} % Version modificada para usar las macros de algo1 de ~> https://github.com/bcardiff/dc-tex
+
+
+\titulo{Trabajo Práctico 2}
+\subtitulo{Clasificación y Selección de Modelos}
+
+\fecha{\today}
+
+\materia{Laboratorio de Datos}
+\grupo{Grupo 100}
+
+\integrante{Apellido, Nombre1}{001/01}{email1@dominio.com}
+\integrante{Martinelli, Lorenzo}{364/23}{martinelli.lorenzo12@gmail.com}
+\integrante{Apellido, Nombre3}{003/01}{email3@dominio.com}
+% Pongan cuantos integrantes quieran
+
+% Declaramos donde van a estar las figuras
+% No es obligatorio, pero suele ser comodo
+\graphicspath{{../static/}}
+
+\begin{document}
+
+\maketitle
+
+\section{Introducción}
+
+\subsection{Fuente de datos}
+
+A lo largo de este proyecto, trabajaremos con un conjunto de datos de imágenes denominado Sign
+Language MNIST, el cual se encuentra en formato csv, donde cada imagen del set de datos representa una letra en lenguaje de
+señas americano. El link al dataset es el siguiente https://www.kaggle.com/datasets/datamunge/sign-language-mnist.
+
+\subsection{Análisis exploratorio de datos}
+
+Consigna 1 con los gráficos.
+
+deje este fragmento de codigo porque lo quierp usar
+\begin{figure}[ht!]
+	\begin{subfigure}{0.5\textwidth}
+		\includegraphics[width=0.9\linewidth]{LaTeX-project} 
+		\caption{Logo de LaTeX}
+		\label{fig:subfig1}
+	\end{subfigure}
+	\begin{subfigure}{0.5\textwidth}
+		\includegraphics[width=0.7\linewidth]{TeX}
+		\caption{Logo de TeX}
+		\label{fig:subfig2}
+	\end{subfigure}
+	\caption{Ejemplo para poner dos figuras juntas. Y citarlas por separado a (\subref{fig:subfig1}) y (\subref{fig:subfig2}).}
+	% OJO: el caption siempre va antes del label
+	\label{fig:subfigs}
+\end{figure}
+
+
+
+
+
+
+
+
+\end{document}
