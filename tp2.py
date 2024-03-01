@@ -210,6 +210,9 @@ Xl = Xl.sum(axis= 0)
 # A través de este df podremos encontrar las regiones de mayor varianza.
 restaAL = Xl - Xa
 
+# Me guardo en una lista los 10 pixeles de mayor varianza.
+maxima_varianza = restaAL.nlargest(n=10)
+
 # Convertimos en array los df.
 Xa = Xa.values
 Xl = Xl.values
@@ -234,9 +237,6 @@ fig.suptitle('Varianza entre A y L', size = 14, x= 0.5, y = 0.96)
 ax.imshow(restaAL.reshape(28,28), cmap = 'gray')
 
 # Con esta imagen podemos ver, claramente donde están los pixeles mas significativos.
-
-# Me guardo en una lista los 10 pixeles de mayor varianza.
-maxima_varianza = restaAL.nlargest(n=10)
 
 # Borro las variables que ya no necesito.
 del Xa, Xl
@@ -271,4 +271,123 @@ for i in range(len(pixeles)):
 
 # Utilizando los pixeles de mayor varianza, obtenemos resultados realmente buenos.
 
-# Para la última parte, haria el for probando valores distintos de k
+# Ahora, probemos, para distintas cantidades de atributos, distintos valores de k.
+
+# Rango de valores por los que se va a mover k
+valores_k = range(1, 10)
+
+resultados_test  = np.zeros(len(valores_k))
+resultados_train = np.zeros(len(valores_k))
+
+X_train_1 = X_train.iloc[:, pixeles[0]]
+X_test_1 = X_test.iloc[:,pixeles[0]]
+
+for k in valores_k:
+    # Declaramos el tipo de modelo
+    clf = KNeighborsClassifier(n_neighbors = k)
+    # Entrenamos el modelo (con datos de train)
+    clf.fit(X_train_1, y_train) 
+    # Evaluamos el modelo con datos de train y luego de test
+    resultados_train[k-1] = clf.score(X_train_1, y_train)
+    resultados_test[k-1]  = clf.score(X_test_1 , y_test )
+
+# Performance con tres pixeles.
+plt.plot(valores_k, resultados_train, label = 'Train')
+plt.plot(valores_k, resultados_test, label = 'Test')
+plt.legend()
+plt.title('Performance del modelo de knn (3 pixeles)')
+plt.xlabel('Cantidad de vecinos')
+plt.ylabel('Precisión')
+plt.xticks(valores_k)
+plt.ylim(0.95,1.00)
+
+# Probemos ahora con conjuntos mas grandes de pixeles. Por ejemplo, 50 pixeles.
+valores_k = range(1, 15)
+
+resultados_test  = np.zeros(len(valores_k))
+resultados_train = np.zeros(len(valores_k))
+
+# Intente agarrar pixeles no tan cercanos a los de mayor varianza.
+X_train_1 = X_train.iloc[:,600:650]
+X_test_1 = X_test.iloc[:,600:650]
+
+for k in valores_k:
+    # Declaramos el tipo de modelo
+    clf = KNeighborsClassifier(n_neighbors = k)
+    # Entrenamos el modelo (con datos de train)
+    clf.fit(X_train_1, y_train) 
+    # Evaluamos el modelo con datos de train y luego de test
+    resultados_train[k-1] = clf.score(X_train_1, y_train)
+    resultados_test[k-1]  = clf.score(X_test_1 , y_test )
+
+# Performance con 50 pixeles.
+plt.plot(valores_k, resultados_train, label = 'Train')
+plt.plot(valores_k, resultados_test, label = 'Test')
+plt.legend()
+plt.title('Performance del modelo de knn (50 pixeles)')
+plt.xlabel('Cantidad de vecinos')
+plt.ylabel('Precisión')
+plt.xticks(valores_k)
+plt.ylim(0.95,1.00)
+
+# Parece ser que el mejor k, sin importar la cantidad de pixeles es 1. Probemos con 1 pixel.
+valores_k = range(1, 15)
+
+resultados_test  = np.zeros(len(valores_k))
+resultados_train = np.zeros(len(valores_k))
+
+X_train_1 = X_train.iloc[:,300:301]
+X_test_1 = X_test.iloc[:,300:301]
+
+for k in valores_k:
+    # Declaramos el tipo de modelo
+    clf = KNeighborsClassifier(n_neighbors = k)
+    # Entrenamos el modelo (con datos de train)
+    clf.fit(X_train_1, y_train) 
+    # Evaluamos el modelo con datos de train y luego de test
+    resultados_train[k-1] = clf.score(X_train_1, y_train)
+    resultados_test[k-1]  = clf.score(X_test_1 , y_test )
+
+# Performance con 1 pixel.
+plt.plot(valores_k, resultados_train, label = 'Train')
+plt.plot(valores_k, resultados_test, label = 'Test')
+plt.legend()
+plt.title('Performance del modelo de knn (50 pixeles)')
+plt.xlabel('Cantidad de vecinos')
+plt.ylabel('Precisión')
+plt.xticks(valores_k)
+plt.ylim(0.65,1.00)
+
+# Tomando un solo pixel en una zona con bastante varianza, vemos que a medida que hay mas 
+# vecinos la precision aumenta. Donde parece que 9 seria un buen k.
+
+# Probemos una zona menos signficativa
+valores_k = range(1, 15)
+
+resultados_test  = np.zeros(len(valores_k))
+resultados_train = np.zeros(len(valores_k))
+
+# Intente agarrar pixeles no tan cercanos a los de mayor varianza.
+X_train_1 = X_train.iloc[:,400:401]
+X_test_1 = X_test.iloc[:,400:401]
+
+for k in valores_k:
+    # Declaramos el tipo de modelo
+    clf = KNeighborsClassifier(n_neighbors = k)
+    # Entrenamos el modelo (con datos de train)
+    clf.fit(X_train_1, y_train) 
+    # Evaluamos el modelo con datos de train y luego de test
+    resultados_train[k-1] = clf.score(X_train_1, y_train)
+    resultados_test[k-1]  = clf.score(X_test_1 , y_test )
+
+# Performance con 1 pixel.
+plt.plot(valores_k, resultados_train, label = 'Train')
+plt.plot(valores_k, resultados_test, label = 'Test')
+plt.legend()
+plt.title('Performance del modelo de knn (50 pixeles)')
+plt.xlabel('Cantidad de vecinos')
+plt.ylabel('Precisión')
+plt.xticks(valores_k)
+plt.ylim(0.45,0.70)
+
+# Si bien la precision bajó notablemente, el resultado es el mismo, con un k = 9 el modelo mejora notoriamente.
