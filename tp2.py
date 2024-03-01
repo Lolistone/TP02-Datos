@@ -68,10 +68,6 @@ Xl = df_sign[df_sign['label'] == 11]
 Xm = df_sign[df_sign['label'] == 12] 
 Xe = df_sign[df_sign['label'] == 4]
 
-Yl = Xl['label']
-Ym = Xm['label']
-Ye = Xe['label']
-
 # Elimino la columna label y convierto en array
 Xl = Xl.drop(['label'], axis = 1).values
 Xm = Xm.drop(['label'], axis = 1).values
@@ -117,7 +113,6 @@ for ax in axe:
 
 # Elimino las variables que no utilizo.
 del Xl, Xm, Xe
-del Yl, Ym, Ye
 del i,j
         
 # (Otra vez, esto va al informe pero mientras lo dejo documentado aca)
@@ -163,7 +158,7 @@ Xc = Xc.values
 
 # Graficamos.
 fig, ax = plt.subplots()
-fig.suptitle('Letras C apiladas', size = 14, x= 0.5, y = 0.98)
+fig.suptitle('Letras C apiladas', size = 14, x= 0.5, y = 0.96)
 
 ax.imshow(Xc.reshape(28,28), cmap = 'gray')
 ax.set_xticks([])
