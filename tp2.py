@@ -9,6 +9,7 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
+from sklearn.neighbors import KNeighborsClassifier
 
 # Guardamos la ruta a la carpeta donde está el csv.
 carpeta = '~/Dropbox/UBA/2024/LaboDeDatos/TP02/'
@@ -218,7 +219,7 @@ restaAL = restaAL.values
 fig, axe = plt.subplots(1, 2)
 fig.suptitle('Letras A y L apiladas', size = 16, x= 0.5, y = 0.85)
 
-# Notemos que imshow rescala solo la imagen.
+# Notemos que imshow reescala solo la imagen.
 axe[0].imshow(Xa.reshape(28,28), cmap = 'gray')
 axe[1].imshow(Xl.reshape(28,28), cmap = 'gray')
 
@@ -230,7 +231,6 @@ for ax in axe:
 fig, ax = plt.subplots()
 fig.suptitle('Varianza entre A y L', size = 14, x= 0.5, y = 0.96)
 
-# Notemos que imshow rescala solo la imagen.
 ax.imshow(restaAL.reshape(28,28), cmap = 'gray')
 
 # Con esta imagen podemos ver, claramente donde están los pixeles mas significativos.
@@ -247,5 +247,8 @@ X = df_al.drop(['label'], axis=1)
 # Separamos en train y test. Utilizo shuffle para garantizar alternancia de clases.
 X_train, X_test, y_train, y_test = train_test_split(X, Y, test_size = 0.2, shuffle = True, random_state=0)
 
-# Armamos el modelo y hacemos pruebas con distintos conjuntos de tres atributos
+# Armamos el modelo
+clf = KNeighborsClassifier(n_neighbors=3)
 
+# Entrenamos el modelo.
+clf.fit(X_train, y_train)
