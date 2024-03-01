@@ -8,7 +8,7 @@ Created on Tue Feb 27 19:52:48 2024
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-import seaborn as sns
+from sklearn.model_selection import train_test_split
 
 # Guardamos la ruta a la carpeta donde está el csv.
 carpeta = '~/Dropbox/UBA/2024/LaboDeDatos/TP02/'
@@ -174,7 +174,73 @@ del Xc
 
 #%% Construccion de modelo.
 
+# Armo un nuevo dataframe que contiene unicamente a la A y la L
+df_al = df_sign.loc[df_sign['label'].isin([0, 11])]
 
+# Miramos la distribución.
+cantA = len(df_al[df_al['label'] == 0])
+cantL = len(df_al[df_al['label'] == 11])
 
+# Realizamos un gráfico de barras.
+fig = plt.figure(figsize = (4, 3))
 
+plt.bar(['A', 'L'], [cantA, cantL], color ='maroon', 
+        width = 0.5)
+ 
+plt.xlabel("Letras")
+plt.ylabel("Cantidad de Imágenes")
+plt.title("Cantidad de imágenes por clase")
+plt.show()
+
+# Podemos observar que la cantidad de estas letras esta bastante balanceada.
+
+# Busco los pixeles mas significativos para distinguir entre la A y la L.
+
+# Primero apilo las letras A y L.
+Xa = df_sign[df_sign['label'] == 0]
+Xa = Xa.drop(['label'], axis = 1)
+Xl = df_sign[df_sign['label'] == 11]
+Xl = Xl.drop(['label'], axis = 1)
+
+# Sumo todos los pixeles de cada columnas y los resto.
+Xa = Xa.sum(axis= 0)
+Xl = Xl.sum(axis= 0)
+
+# A través de este df podremos encontrar las regiones de mayor varianza.
+restaAL = Xl - Xa
+
+# Convertimos en array los df.
+Xa = Xa.values
+Xl = Xl.values
+restaAL = restaAL.values
+
+# Graficamos A y L apiladas
+fig, axe = plt.subplots(1, 2)
+fig.suptitle('Letras A y L apiladas', size = 16, x= 0.5, y = 0.85)
+
+# Notemos que imshow rescala solo la imagen.
+axe[0].imshow(Xa.reshape(28,28), cmap = 'gray')
+axe[1].imshow(Xl.reshape(28,28), cmap = 'gray')
+
+for ax in axe:
+    ax.set_xticks([])
+    ax.set_yticks([])
+
+# Graficamos A - L.
+fig, ax = plt.subplots()
+fig.suptitle('Varianza entre A y L', size = 14, x= 0.5, y = 0.96)
+
+# Notemos que imshow rescala solo la imagen.
+ax.imshow(restaAL.reshape(28,28), cmap = 'gray')
+
+# Con esta imagen podemos ver, claramente donde están los pixeles mas significativos.
+ 
+# Separo los datos a predecir
+Y = df_al['label']
+X = df_al.drop(['label'], axis=1)
+
+# Separamos en train y test. Utilizo shuffle para garantizar alternancia de clases.
+X_train, X_test, y_train, y_test = train_test_split(X, Y, test_size = 0.2, shuffle = True, random_state=0)
+
+# Armamos el modelo y hacemos pruebas con distintos conjuntos de tres atributos
 
