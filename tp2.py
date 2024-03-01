@@ -160,6 +160,7 @@ Xc = Xc.values
 fig, ax = plt.subplots()
 fig.suptitle('Letras C apiladas', size = 14, x= 0.5, y = 0.96)
 
+# Notemos que imshow rescala solo la imagen.
 ax.imshow(Xc.reshape(28,28), cmap = 'gray')
 ax.set_xticks([])
 ax.set_yticks([])
