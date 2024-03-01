@@ -96,7 +96,7 @@ for ax in axe:
         
 # Ahora, comparo la E con la M
 fig, axe = plt.subplots(2,3)
-fig.suptitle('Letra E vs L', size = 14, x= 0.5, y = 0.995)
+fig.suptitle('Letra E vs M', size = 14, x= 0.5, y = 0.995)
 plt.subplots_adjust(hspace= 0.4, wspace = -0.2)
 
 for j in range(3):
@@ -112,14 +112,67 @@ for ax in axe:
     for i in range(3):
         ax[i].set_xticks([])
         ax[i].set_yticks([])
+
+# Elimino las variables que no utilizo.
+del Xl, Xm, Xe
+del Yl, Ym, Ye
+del i,j
         
 # (Otra vez, esto va al informe pero mientras lo dejo documentado aca)
 # Viendo los dos graficos, se puede ver bien claro que hay letras que se parecen mucho entre si.
 # En este caso, la letra E y la letra M son muy similares entre si. Pero, son bastante diferentes 
 # a la letra L.
+
+# Ahora, comparemos imagenes de una misma letra. En particular, la letra C.
+
+# Filtro en el dataset la letra C.
+Xc = df_sign[df_sign['label'] == 2] 
+
+# Elimino la columna label y convierto en array
+Xc = Xc.drop(['label'], axis = 1).values
+
+# Primero, veamos varios ejemplos de una misma letra.
+fig, axe = plt.subplots(2,3)
+fig.suptitle('Letra C', size = 20, x= 0.5, y = 0.98)
+plt.subplots_adjust(hspace= 0.2, wspace = 0.2)
+
+label = 0
+for i in range(2):
+    for j in range(3):
+        axe[i][j].imshow(Xc[label].reshape(28,28), cmap='gray')
+        label += 1
         
-# Elimino las variables que no utilizo.
-del Xl
-del Xm
-del Xe
+# Elimino los ticks de todos los subplot.
+for ax in axe:
+    for i in range(3):
+        ax[i].set_xticks([])
+        ax[i].set_yticks([])
+        
+# Ahora, podemos ver claramente que hay ciertas diferencias entre una misma letra
+# por lo que tenemos que tener cuidado. 
+
+# Una posible solución, para encontrar los pixeles mas característicos es apilar las imagenes.
+Xc = df_sign[df_sign['label'] == 2]
+Xc = Xc.drop(['label'], axis = 1)
+
+# Sumo todos los pixeles de cada columnas y lo convierto en array.
+Xc = Xc.sum(axis= 0)
+Xc = Xc.values
+
+# Graficamos.
+fig, ax = plt.subplots()
+fig.suptitle('Letras C apiladas', size = 14, x= 0.5, y = 0.98)
+
+ax.imshow(Xc.reshape(28,28), cmap = 'gray')
+ax.set_xticks([])
+ax.set_yticks([])
+
+# Eliminamos variables
+del i, j
+del Xc
+
+# Podemos ver ahora, cuales son exactamente los atributos que identifican a la leta C. Y, además
+# determinar con esto donde esta la mayor semejanza entre estas.
+
+
 
