@@ -234,7 +234,12 @@ fig.suptitle('Varianza entre A y L', size = 14, x= 0.5, y = 0.96)
 ax.imshow(restaAL.reshape(28,28), cmap = 'gray')
 
 # Con esta imagen podemos ver, claramente donde están los pixeles mas significativos.
- 
+
+# Borro las variables que ya no necesito.
+del Xa, Xl
+del cantA, cantL
+del ax, axe
+
 # Separo los datos a predecir
 Y = df_al['label']
 X = df_al.drop(['label'], axis=1)
