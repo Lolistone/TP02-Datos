@@ -255,32 +255,19 @@ clf = KNeighborsClassifier(n_neighbors=3)
 
 # Elijo que pixeles usar. Obviamente, teniendo encuenta la lista 'maxima_varianza'
 
-# Tomo los 3 con mayor varianza.
-X_train_1 = X_train.iloc[:,[300, 273, 245]]
-X_test_1 = X_test.iloc[:,[300, 273, 245]]
+pixeles = [[300, 273, 245], [301, 298, 272], [32, 70, 30]]
+for i in range(3):
+    X_train_1 = X_train.iloc[:, pixeles[i]]
+    X_test_1 = X_test.iloc[:,pixeles[i]]
 
-# Los segundos 3 con mayor varianza
-X_train_2 = X_train.iloc[:,[301, 298, 272]]
-X_test_2 = X_test.iloc[:,[301, 298, 272]]
+    # Entrenamos el modelo.
+    clf.fit(X_train_1, y_train)
+    
+    # Evaluamos la exactitud.
+    print("Test set accuracy: {:.2f}".format(clf.score(X_test_1, y_test)))
 
-# Tres pixeles al azar.
-X_train_random = X_train.iloc[:,[32, 70, 30]]
-X_test_random = X_test.iloc[:,[32, 70, 30]]
-
-# Entrenamos el modelo.
-clf.fit(X_train_1, y_train)
-# Evaluamos la exactitud.
-print("Test set accuracy: {:.2f}".format(clf.score(X_test_1, y_test)))
-
-# Entrenamos el modelo.
-clf.fit(X_train_2, y_train)
-# Evaluamos la exactitud.
-print("Test set accuracy: {:.2f}".format(clf.score(X_test_2, y_test)))
-
-# Entrenamos el modelo.
-clf.fit(X_train_random, y_train)
-# Evaluamos la exactitud.
-print("Test set accuracy: {:.2f}".format(clf.score(X_test_random, y_test)))
 
 # Esta prueba, nos muestra claramente que 3 pixeles son mas que suficientes para
 # tener un modelo com gran exactitud.
+
+# Para la última parte, haria el for probando valores distintos de k
