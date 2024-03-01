@@ -235,6 +235,9 @@ ax.imshow(restaAL.reshape(28,28), cmap = 'gray')
 
 # Con esta imagen podemos ver, claramente donde están los pixeles mas significativos.
 
+# Me guardo en una lista los 10 pixeles de mayor varianza.
+maxima_varianza = restaAL.nlargest(n=10)
+
 # Borro las variables que ya no necesito.
 del Xa, Xl
 del cantA, cantL
@@ -250,5 +253,34 @@ X_train, X_test, y_train, y_test = train_test_split(X, Y, test_size = 0.2, shuff
 # Armamos el modelo
 clf = KNeighborsClassifier(n_neighbors=3)
 
+# Elijo que pixeles usar. Obviamente, teniendo encuenta la lista 'maxima_varianza'
+
+# Tomo los 3 con mayor varianza.
+X_train_1 = X_train.iloc[:,[300, 273, 245]]
+X_test_1 = X_test.iloc[:,[300, 273, 245]]
+
+# Los segundos 3 con mayor varianza
+X_train_2 = X_train.iloc[:,[301, 298, 272]]
+X_test_2 = X_test.iloc[:,[301, 298, 272]]
+
+# Tres pixeles al azar.
+X_train_random = X_train.iloc[:,[32, 70, 30]]
+X_test_random = X_test.iloc[:,[32, 70, 30]]
+
 # Entrenamos el modelo.
-clf.fit(X_train, y_train)
+clf.fit(X_train_1, y_train)
+# Evaluamos la exactitud.
+print("Test set accuracy: {:.2f}".format(clf.score(X_test_1, y_test)))
+
+# Entrenamos el modelo.
+clf.fit(X_train_2, y_train)
+# Evaluamos la exactitud.
+print("Test set accuracy: {:.2f}".format(clf.score(X_test_2, y_test)))
+
+# Entrenamos el modelo.
+clf.fit(X_train_random, y_train)
+# Evaluamos la exactitud.
+print("Test set accuracy: {:.2f}".format(clf.score(X_test_random, y_test)))
+
+# Esta prueba, nos muestra claramente que 3 pixeles son mas que suficientes para
+# tener un modelo com gran exactitud.
