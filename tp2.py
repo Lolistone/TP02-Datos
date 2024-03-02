@@ -14,11 +14,12 @@ from sklearn.neighbors import KNeighborsClassifier
 # Guardamos la ruta a la carpeta donde está el csv.
 carpeta = '~/Dropbox/UBA/2024/LaboDeDatos/TP02/'
 
+
 # Importamos el archivo .csv
 df_sign = pd.read_csv(carpeta + 'sign_mnist_train.csv')
 
 # Creo un diccionario label -> letra.
-letras : dict = {'0' : 'A', 1 : 'B', 2 : 'C', 3 : 'D', 4 : 'E', 5 : 'F', 6 : 'G',
+letras : dict = {0 : 'A', 1 : 'B', 2 : 'C', 3 : 'D', 4 : 'E', 5 : 'F', 6 : 'G',
                  7: 'H', 8: 'I', 9: 'J', 10 : 'K', 11 : 'L', 12 : 'M', 13 : 'N',
                  14 : 'O', 15 : 'P', 16 : 'Q', 17: 'R', 18 : 'S', 19: 'T', 20: 'U',
                  21: 'V', 22 : 'W', 23 : 'X', 24: 'Y', 25 : 'Z'}
@@ -34,7 +35,7 @@ X = X.values
 
 # Genero una 'Preview' del dataset para ver como son las imagenes.
 fig, axe = plt.subplots(3,3)
-fig.suptitle('Preview del dataset', size = 14, x= 0.5, y = 0.995)
+fig.suptitle('Preview del dataset', size = 14)
 plt.subplots_adjust(hspace= 0.4, wspace = -0.2)
 
 label : int = 0
@@ -49,8 +50,11 @@ for ax in axe:
     for i in range(3):
         ax[i].set_xticks([])
         ax[i].set_yticks([])
-
-# Aca me falta el savefig para guardar las figuras, así las agregamos al principio del informe
+        
+plt.rcParams['figure.autolayout'] = True
+plt.savefig('atributos_relevantes.png', dpi = 400)
+plt.show()
+plt.close(fig)
 
 # Elimino las variables que no uso.
 del X, Y
@@ -76,7 +80,7 @@ Xe = Xe.drop(['label'], axis = 1).values
 
 # Comparamos la letra E contra la L.
 fig, axe = plt.subplots(2,3)
-fig.suptitle('Letra E vs L', size = 14, x= 0.5, y = 0.995)
+fig.suptitle('Letra E vs L', size = 14)
 plt.subplots_adjust(hspace= 0.4, wspace = -0.2)
 
 for j in range(3):
@@ -93,9 +97,14 @@ for ax in axe:
         ax[i].set_xticks([])
         ax[i].set_yticks([])
         
+plt.rcParams['figure.autolayout'] = True       
+plt.savefig('letra_E_vs_L.png', dpi = 400)
+plt.show()
+plt.close(fig)
+
 # Ahora, comparo la E con la M
 fig, axe = plt.subplots(2,3)
-fig.suptitle('Letra E vs M', size = 14, x= 0.5, y = 0.995)
+fig.suptitle('Letra E vs M', size = 14)
 plt.subplots_adjust(hspace= 0.4, wspace = -0.2)
 
 for j in range(3):
@@ -111,6 +120,11 @@ for ax in axe:
     for i in range(3):
         ax[i].set_xticks([])
         ax[i].set_yticks([])
+        
+plt.rcParams['figure.autolayout'] = True
+plt.savefig('letra_E_vs_M.png', dpi = 400)
+plt.show()
+plt.close(fig)
 
 # Elimino las variables que no utilizo.
 del Xl, Xm, Xe
@@ -145,7 +159,11 @@ for ax in axe:
     for i in range(3):
         ax[i].set_xticks([])
         ax[i].set_yticks([])
-        
+     
+plt.savefig('letra_C.png', dpi = 400)
+plt.show()
+plt.close(fig)     
+
 # Ahora, podemos ver claramente que hay ciertas diferencias entre una misma letra
 # por lo que tenemos que tener cuidado. 
 
@@ -166,6 +184,10 @@ ax.imshow(Xc.reshape(28,28), cmap = 'gray')
 ax.set_xticks([])
 ax.set_yticks([])
 
+plt.savefig('letra_C_apilada.png', dpi = 400)
+plt.show()
+plt.close(fig)  
+
 # Eliminamos variables
 del i, j
 del Xc
@@ -183,15 +205,20 @@ cantA = len(df_al[df_al['label'] == 0])
 cantL = len(df_al[df_al['label'] == 11])
 
 # Realizamos un gráfico de barras.
-fig = plt.figure(figsize = (4, 3))
+fig = plt.figure(figsize = (7, 6))
 
 plt.bar(['A', 'L'], [cantA, cantL], color ='maroon', 
         width = 0.5)
  
+for i, valor in enumerate([cantA, cantL]):
+    plt.text(i, valor, str(valor), ha='center', va='bottom')
+
 plt.xlabel("Letras")
 plt.ylabel("Cantidad de Imágenes")
 plt.title("Cantidad de imágenes por clase")
+plt.savefig('cantidad_letras_A_L.png', dpi = 400)
 plt.show()
+plt.close(fig)
 
 # Podemos observar que la cantidad de estas letras esta bastante balanceada.
 
@@ -208,7 +235,7 @@ Xa = Xa.sum(axis= 0)
 Xl = Xl.sum(axis= 0)
 
 # A través de este df podremos encontrar las regiones de mayor varianza.
-restaAL = Xl - Xa
+restaAL = abs(Xl - Xa)
 
 # Me guardo en una lista los 10 pixeles de mayor varianza.
 maxima_varianza = restaAL.nlargest(n=10)
@@ -230,12 +257,18 @@ for ax in axe:
     ax.set_xticks([])
     ax.set_yticks([])
 
+plt.savefig('cantidad_letras_A_L.png', dpi = 400)    
+plt.show()
+plt.close(fig)
+
 # Graficamos A - L.
 fig, ax = plt.subplots()
 fig.suptitle('Varianza entre A y L', size = 14, x= 0.5, y = 0.96)
 
 ax.imshow(restaAL.reshape(28,28), cmap = 'gray')
 
+plt.show()
+plt.close(fig)
 # Con esta imagen podemos ver, claramente donde están los pixeles mas significativos.
 
 # Borro las variables que ya no necesito.
@@ -300,6 +333,8 @@ plt.xlabel('Cantidad de vecinos')
 plt.ylabel('Precisión')
 plt.xticks(valores_k)
 plt.ylim(0.95,1.00)
+plt.savefig('3pixeles.png', dpi = 400)
+plt.show()
 
 # Probemos ahora con conjuntos mas grandes de pixeles. Por ejemplo, 50 pixeles.
 valores_k = range(1, 15)
@@ -329,6 +364,8 @@ plt.xlabel('Cantidad de vecinos')
 plt.ylabel('Precisión')
 plt.xticks(valores_k)
 plt.ylim(0.95,1.00)
+plt.savefig('50pixeles.png', dpi = 400)
+plt.show()
 
 # Parece ser que el mejor k, sin importar la cantidad de pixeles es 1. Probemos con 1 pixel.
 valores_k = range(1, 15)
@@ -357,6 +394,9 @@ plt.xlabel('Cantidad de vecinos')
 plt.ylabel('Precisión')
 plt.xticks(valores_k)
 plt.ylim(0.65,1.00)
+plt.savefig('1pixelalto.png', dpi = 400)
+plt.show()
+
 
 # Tomando un solo pixel en una zona con bastante varianza, vemos que a medida que hay mas 
 # vecinos la precision aumenta. Donde parece que 9 seria un buen k.
@@ -389,5 +429,6 @@ plt.xlabel('Cantidad de vecinos')
 plt.ylabel('Precisión')
 plt.xticks(valores_k)
 plt.ylim(0.45,0.70)
-
+plt.savefig('1pixelbajo.png', dpi = 400)
+plt.show()
 # Si bien la precision bajó notablemente, el resultado es el mismo, con un k = 9 el modelo mejora notoriamente.
