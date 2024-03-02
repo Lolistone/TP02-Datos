@@ -433,3 +433,75 @@ plt.ylim(0.45,0.70)
 plt.savefig('1pixelbajo.png', dpi = 400)
 plt.show()
 # Si bien la precision bajó notablemente, el resultado es el mismo, con un k = 9 el modelo mejora notoriamente.
+
+#Filtro las vocales a,e,i,o,u 
+Xvocal = df_sign[df_sign["label"].isin([0,4,8,14,20])]
+Yvocal=Xvocal[["label"]]
+
+# Dividimos en test(30%) y train(70%)
+
+X_train, X_test, Y_train, Y_test = train_test_split(Xvocal, Yvocal, test_size = 0.3,shuffle=True,random_state=50)
+
+
+#a)
+from sklearn.model_selection import train_test_split
+from sklearn.model_selection import RandomizedSearchCV
+from sklearn.tree import DecisionTreeClassifier,plot_tree,export_graphviz
+import graphviz
+from sklearn.model_selection import cross_val_score
+from sklearn.model_selection import KFold
+from sklearn.metrics import accuracy_score #lo uso para la precision
+
+# arboles de diferentes profundidades, se observa que la precision es la misma a partir de h=4
+for i in [1,2,3,4,8]:
+    arbol= DecisionTreeClassifier(max_depth=i)
+    arbol.fit(X_train, Y_train)
+    Y_pred = arbol.predict(X_test)
+    precision = accuracy_score(Y_test, Y_pred)
+    print(f"Precisión para árbol con profundidad {i}: {precision}")
+    
+
+# b)evaluamos el rendimiento del modelo, para ello  utilizamos validación cruzada con k-folding
+# Itera sobre cada profundidad para luego obtener  media y estandar.Se obtiene la misma 
+#informacion que en el item a) se obsera que a mayor profundidad mayor es la media y menor la desviacioin estandar.
+#tambien se observa que a partir de la profundidad 4 los valores de media y desviacion son iguales.
+#(me magino que esto pasa porque son 5 letras,pero no estoy segura) 
+
+for i in [1,2,3,4,8]:
+    arbol = DecisionTreeClassifier(max_depth=i) 
+    arbol.fit(X_train, Y_train)
+    k_fold = KFold(n_splits=5, shuffle=True, random_state=42)
+    scores = cross_val_score(arbol, X_train, Y_train, cv=k_fold)
+    media = scores.mean()
+    std = scores.std()
+    print(f"Profundidad {i}: Precisión media: {media}, Desviación estándar: {std}")
+
+#c) para buscar el mejor modelo exploramos distintas combinaciones de hiperparametros
+#en este caso distintas profundidades del arbol
+
+hyper_params = {"max_depth" : [1,2,3,4,8] }
+
+arbol= DecisionTreeClassifier()
+clf = RandomizedSearchCV(arbol, hyper_params, random_state=0,n_iter=3)
+clf.fit(Xvocal, Yvocal)
+clf.best_params_
+clf.best_score_
+
+clf.predict(X_test)
+clf.score(X_test,Y_test) 
+
+
+
+#Grafico el que considero el mejor modelo, es decir el arbol de profundidad 4, y guardo la imagen
+
+
+arbol = DecisionTreeClassifier(max_depth=4) 
+arbol.fit(X_train, Y_train)
+
+dot_data = export_graphviz(arbol, out_file=None, feature_names= Xvocal.columns,
+class_names= ["A", "E","I","O","U"],
+filled=True, rounded=True,
+special_characters=True)
+graph = graphviz.Source(dot_data) 
+graph.render("Que vocal es", format= "png")
+
