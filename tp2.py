@@ -8,6 +8,7 @@ Created on Tue Feb 27 19:52:48 2024
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
+import seaborn as sns
 from sklearn.model_selection import train_test_split
 from sklearn.neighbors import KNeighborsClassifier
 
@@ -56,17 +57,37 @@ plt.savefig('atributos_relevantes.png', dpi = 400)
 plt.show()
 plt.close(fig)
 
+# Analizo la distribucion de clases.
+distribucion = df_sign.groupby(['label']).size().reset_index(name = 'cantidad_de_imagenes')
+
+# Realizamos un gráfico de barras.
+fig, ax = plt.subplots()
+
+plt.rcParams['font.family'] = 'sans-serif'
+ax.bar(data= distribucion, 
+       x='label', 
+       height='cantidad_de_imagenes',
+       color = 'maroon',
+       width = 0.8)
+       
+ax.set_title('Distribución de Clases')                    
+ax.set_xlabel('Letras', fontsize='medium')                      
+ax.set_ylabel('Cantidad de Imagenes', fontsize='medium')
+
+l = list(letras.keys())
+label = list(letras.values())
+
+ax.set_xticks(l)
+ax.set_xticklabels(label) # Cambio por las letras los parametros del eje x
+
+plt.savefig('distribucion.png', dpi = 400)
+
+
 # Elimino las variables que no uso.
 del X, Y
 del label
 del i, j
 del ax, axe
-
-# (Esto iria en el informe, no aca, pero mientras tanto)
-# Los atributos que a nuestro criterio, son mas relevantes para predecir una seña son aquellos
-# correspondientes a los pixeles 'centrales' dado que dan a conocer mayor información acerca de la mano.
-# Si hay atributos que a simple vista podrían descartarse son los pixeles del fondo. Sin embargo, habria
-# que tener cierto cuidado pues no todas las imagenes poseen los mismo pixeles de fondo.}
 
 # Filtro en el dataset las letras, L, E y M.
 Xl = df_sign[df_sign['label'] == 11] 
@@ -273,9 +294,11 @@ plt.close(fig)
 # Con esta imagen podemos ver, claramente donde están los pixeles mas significativos.
 
 # Borro las variables que ya no necesito.
-del Xa, Xl
+del Xa, Xl, restaAL
 del cantA, cantL
 del ax, axe
+del i, label
+del fig
 
 # Separo los datos a predecir
 Y = df_al['label']
@@ -432,7 +455,16 @@ plt.xticks(valores_k)
 plt.ylim(0.45,0.70)
 plt.savefig('1pixelbajo.png', dpi = 400)
 plt.show()
+
 # Si bien la precision bajó notablemente, el resultado es el mismo, con un k = 9 el modelo mejora notoriamente.
+
+del clf
+del X, X_test, X_test_1, X_train, X_train_1, Y, y_test
+del df_al
+del i, k
+del pixeles, maxima_varianza
+del resultados, resultados_test, resultados_train
+#%% Clasificación multiclase
 
 #Filtro las vocales a,e,i,o,u 
 Xvocal = df_sign[df_sign["label"].isin([0,4,8,14,20])]

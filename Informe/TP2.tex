@@ -25,15 +25,66 @@
 
 \maketitle
 
-\section{Introducción}
+\section{Introducción}  \vspace{0.1cm}
 
-\subsection{Fuente de datos}
+\subsection{Fuente de datos} \vspace{0.1cm}
 
 A lo largo de este proyecto, trabajaremos con un conjunto de datos de imágenes denominado Sign
 Language MNIST, el cual se encuentra en formato csv, donde cada imagen del set de datos representa una letra en lenguaje de
 señas americano. El link al dataset es el siguiente https://www.kaggle.com/datasets/datamunge/sign-language-mnist.
 
-\subsection{Análisis exploratorio de datos}
+\subsection{Análisis exploratorio de datos}  \vspace{0.1cm}
+
+Antes de ponernos a trabajar con los datos, necesitamos saber mas acerca de ellos. Sabemos que, cada fila del dataset representa una imagen de 28x28 pixeles en escala de grises que corresponde a una letra en lenguaje de señas, miremos a continuación un pequeño fragmento del mismo.
+
+ \vspace{0.1cm}
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=1.0\textwidth]{Imagenes/atributos\_relevantes.png}
+  \caption{Primeras nueve imagenes del dataset}
+  \label{fig:Tabla 1}
+\end{figure}
+
+ \vspace{0.1cm}
+
+A partir del gráfico anterior, podemos inferir que no todos los pixeles son realmente relevante para diferenciar imágenes entre si. Por ejemplo, podemos ver
+que aquellos pixeles correspondientes al fondo no aportan información alguna. ¿Cuántos pixeles necesitaremos realmente para diferenciar las imágenes? \vspace{0.05cm}
+
+Por otro lado, viendo por ejemplo, que las letras C y D aparecen más de una vez, también surge la pregunta. ¿Están balanceadas las distintas clases que identifican a las letras? En el gráfico a continuación, podremos notar que tenemos un dataset con una excelente distribución de clases. ¿Por qué me interesa
+tener una cantidad pareja de cada muestra? Esto, adquiere relevancia puesto que al entrenar nuestros modelos en un futuro, no queremos tener sesgos.
+\vspace{0.05cm}
+  
+Obs: Las letras J y Z no poseen ningún ejemplar puesto que requieren de movimiento para su seña.
+
+\vspace{0.1cm}
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.8\textwidth]{Imagenes/distribucion.png}
+  \caption{Cantidad de muestras de cada letra}
+  \label{fig:Tabla 1}
+\end{figure}
+
+\newpage
+
+Otra pregunta que naturalmente surge al explorar el dataser es que tan distintas son las letras entre sí, y si las diferentes muestras respecto a una misma letras
+presentan diferencias notorias o no. Para eso, comparemos por ejemplo, las letras E, L Y M.
+
+\begin{figure}[ht!]
+	\begin{subfigure}{0.5\textwidth}
+		\includegraphics[width=0.9\linewidth]{Imagenes/letra_E_vs_L.png} 
+		\caption{Los 3 pixeles con mayor varianza}
+		\label{fig:subfig1}
+	\end{subfigure}
+	\begin{subfigure}{0.5\textwidth}
+		\includegraphics[width=0.9\linewidth]{Imagenes/letra_E_vs_M.png}
+		\caption{50 pixeles en una zona de varianza media}
+		\label{fig:subfig2}
+	\end{subfigure}
+	% OJO: el caption siempre va antes del label
+	\label{fig:subfigs}
+\end{figure}
 
 \section{Modelo}
 Realizando distintas pruebas, notamos que utilizando distintas cantidades de pixeles, a medida que el numero de vecinos incrementa
@@ -41,12 +92,12 @@ la performance decae, siendo el número ideal de vecinos exactamente 1.
 
 \begin{figure}[ht!]
 	\begin{subfigure}{0.5\textwidth}
-		\includegraphics[width=0.9\linewidth]{Informe/Imagenes/50pixeles.png} 
+		\includegraphics[width=0.9\linewidth]{Imagenes/50pixeles.png} 
 		\caption{Los 3 pixeles con mayor varianza}
 		\label{fig:subfig1}
 	\end{subfigure}
 	\begin{subfigure}{0.5\textwidth}
-		\includegraphics[width=0.9\linewidth]{Informe/Imagenes/3pixeles.png}
+		\includegraphics[width=0.9\linewidth]{Imagenes/3pixeles.png}
 		\caption{50 pixeles en una zona de varianza media}
 		\label{fig:subfig2}
 	\end{subfigure}
@@ -59,12 +110,12 @@ que el numero de vecinos es mayor. En este caso, a partir de los gráficos, pare
 
 \begin{figure}[ht!]
 	\begin{subfigure}{0.5\textwidth}
-		\includegraphics[width=0.9\linewidth]{Informe/Imagenes/1pixelalto.png} 
+		\includegraphics[width=0.9\linewidth]{imagenes/1pixelalto.png} 
 		\caption{Pixeles de alta varianza}
 		\label{fig:subfig1}
 	\end{subfigure}
 	\begin{subfigure}{0.5\textwidth}
-		\includegraphics[width=0.9\linewidth]{Informe/Imagenes/1pixelbajo.png}
+		\includegraphics[width=0.9\linewidth]{Imagenes/1pixelbajo.png}
 		\caption{Pixeles de baja varianza}
 		\label{fig:subfig2}
 	\end{subfigure}
