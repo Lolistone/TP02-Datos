@@ -262,7 +262,7 @@ Xa = Xa.sum(axis= 0)
 Xl = Xl.sum(axis= 0)
 
 # A través de este df podremos encontrar las regiones de mayor varianza.
-restaAL = abs(Xl - Xa)
+restaAL = Xl - Xa
 
 # Me guardo en una lista los 10 pixeles de mayor varianza.
 maxima_varianza = restaAL.nlargest(n=10)

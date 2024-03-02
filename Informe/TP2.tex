@@ -35,7 +35,7 @@ señas americano. El link al dataset es el siguiente https://www.kaggle.com/data
 
 \subsection{Análisis exploratorio de datos}  \vspace{0.1cm}
 
-Antes de ponernos a trabajar con los datos, necesitamos saber mas acerca de ellos. Sabemos que, cada fila del dataset representa una imagen de 28x28 pixeles en escala de grises que corresponde a una letra en lenguaje de señas, miremos a continuación un pequeño fragmento del mismo.
+Antes de ponernos a trabajar con los datos, necesitamos saber mas acerca de ellos. Sabemos que, cada fila del dataset representa una imagen de 28x28 pixeles en escala de grises que corresponde a una letra en lenguaje de señas. Miremos a continuación un pequeño fragmento del mismo.
 
  \vspace{0.1cm}
 
@@ -48,7 +48,7 @@ Antes de ponernos a trabajar con los datos, necesitamos saber mas acerca de ello
 
  \vspace{0.1cm}
 
-A partir del gráfico anterior, podemos inferir que no todos los pixeles son realmente relevante para diferenciar imágenes entre si. Por ejemplo, podemos ver
+A partir del gráfico anterior, podemos inferir que no todos los pixeles son realmente relevantes para diferenciar imágenes entre si. Por ejemplo, podemos ver
 que aquellos pixeles correspondientes al fondo no aportan información alguna. ¿Cuántos pixeles necesitaremos realmente para diferenciar las imágenes? \vspace{0.05cm}
 
 Por otro lado, viendo por ejemplo, que las letras C y D aparecen más de una vez, también surge la pregunta. ¿Están balanceadas las distintas clases que identifican a las letras? En el gráfico a continuación, podremos notar que tenemos un dataset con una excelente distribución de clases. ¿Por qué me interesa
@@ -69,44 +69,110 @@ Obs: Las letras J y Z no poseen ningún ejemplar puesto que requieren de movimie
 \newpage
 
 Otra pregunta que naturalmente surge al explorar el dataser es que tan distintas son las letras entre sí, y si las diferentes muestras respecto a una misma letras
-presentan diferencias notorias o no. Para eso, comparemos por ejemplo, las letras E, L Y M.
+presentan diferencias notorias o no. Para eso, comparemos por ejemplo, las letras E, L y M.
 
 \begin{figure}[ht!]
 	\begin{subfigure}{0.5\textwidth}
 		\includegraphics[width=0.9\linewidth]{Imagenes/letra_E_vs_L.png} 
-		\caption{Los 3 pixeles con mayor varianza}
+		\caption{Muestras de las letras E y L}
 		\label{fig:subfig1}
 	\end{subfigure}
 	\begin{subfigure}{0.5\textwidth}
 		\includegraphics[width=0.9\linewidth]{Imagenes/letra_E_vs_M.png}
-		\caption{50 pixeles en una zona de varianza media}
+		\caption{Muestras de las letras E y M}
 		\label{fig:subfig2}
 	\end{subfigure}
 	% OJO: el caption siempre va antes del label
 	\label{fig:subfigs}
 \end{figure}
 
+En la imagen anterior, podemos apreciar que tanto la letra E como la M son muy distintas a la letra L, sin embargo, poseen muchas semenjanzas entre sí. Esto, es algo a tener en cuenta a la hora de plantear los modelos, cuales serán los pixeles mas representativos para imagenes similares.
+Miremos también, si en imagenes pertenencientes a una misma letra hay diferencias notorias. 
+
+\begin{figure}[ht!]
+	\begin{subfigure}{0.5\textwidth}
+		\centering
+		\includegraphics[width=1\linewidth]{Imagenes/letra_C.png} 
+		\caption{Distintas muestras de la letra C}
+		\label{fig:subfig1}
+	\end{subfigure}
+	\begin{subfigure}{0.55\textwidth}
+		\includegraphics[width=1\linewidth]{Imagenes/letra_C_apilada.png}
+		\caption{Todas las muestras de la letra C apiladas}
+		\label{fig:subfig2}
+	\end{subfigure}
+	% OJO: el caption siempre va antes del label
+	\label{fig:subfigs}
+\end{figure}
+
+\newpage
+
+Si bien, a simple vista, cuando comparamos algunos ejemplares, pareciera que las diferencias pueden llegar a ser significativas, a la hora de comparar todos los ejemplares, en este caso, apilandolos, notamos que forman una silueta que representa muy bien la seña a la que corresponde. \vspace{0.1cm}
+
+A partir de todo el análisis anterior, pudimos notar que no representa diferencias significativas el trabajar con imagenes respecto a datasets como el del titanic, respecto a su dificultad. Si, quizas, lleva algo mas de tiempo su análisis, pero con las herramientas indicadas no presenta mayores dificultades.
+
+\vspace{0.1cm}
+
+
 \section{Modelo}
-Realizando distintas pruebas, notamos que utilizando distintas cantidades de pixeles, a medida que el numero de vecinos incrementa
-la performance decae, siendo el número ideal de vecinos exactamente 1.
+
+\subsection{¿La imagen corresponde a una seña de la L o a una seña de la A?} \vspace{0.1cm}
+
+En esta sección, trabajeremos con un subconjunto del dataset original, donde solo esten la letra A  y L. Nuestro objetivo, será encontrar un modelo que
+diferencie con la menor cantidad de pixeles posibles. Comencemos entonces, viendo las diferencias entre estas letras y cuantas muestras tenemos. 
+
+\begin{figure}[ht!]
+	\begin{subfigure}{0.5\textwidth}
+		\centering
+		\includegraphics[width=1\linewidth]{Imagenes/letras\_A\_L\_apiladas.png} 
+		\caption{Todas las letras A y L apiladas y reescaladas}
+		\label{fig:subfig1}
+	\end{subfigure}
+	\begin{subfigure}{0.55\textwidth}
+		\includegraphics[width=1\linewidth]{Imagenes/cantidad\_letras\_A\_L.png}
+		\caption{Cantidad por clase}
+		\label{fig:subfig2}
+	\end{subfigure}
+	% OJO: el caption siempre va antes del label
+	\label{fig:subfigs}
+\end{figure}
+
+Sabemos entonces, que tenemos buena distribución, y podemos ver de la imagen de la izquierda que pareceria que hay dos zonas que diferencian bien ambas letras, lo que vamos a hacer entonces es 'restar' ambas letras para asi encontrar donde estan los pixeles de mayor varianza. ¿Por qué los de mayor varianza? Puesto que son aquellos que representan mas la diferencia entre ambas imagenes. 
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.8\textwidth]{Imagenes/varianza.png}
+  \caption{Letra L - A}
+  \label{fig:Tabla 1}
+\end{figure}
+
+Notamos que, la zona con mayor varianza seria en la zona mas oscura que aparece en el medio de la imagen o, en su defecto, la zona mas blanca. Para saber esto con precisión utilizamos una función de pandas que nos devuelve en una lista las 10 posiciones con los valores mas altos. Destacando, que los pixeles
+mas representativos son el 301, 274 y 246. 
+
+\subsection{Construcción del Modelo} \vspace{0.1cm}
+
+Una vez, que conocemos bastante acerca de nuestro dataset, estamos en condiciones de armar nuestro clasificador Knn. A fines de afinar nuestro modelo, hicimos pruebas utilizando distintas cantidades de pixeles, la idea es, utilizar la menor cantidad posible para asi no usar datasets tan grandes. \vspace{0.05cm}
+Como ya conociamos aquellos pixeles mas significativos, hicimos pruebas utilizando 1, 3 y 50 pixeles tomando a su vez, distinta cantidad de vecinos. 
+A continuación tenemos los resultados.
 
 \begin{figure}[ht!]
 	\begin{subfigure}{0.5\textwidth}
 		\includegraphics[width=0.9\linewidth]{Imagenes/50pixeles.png} 
-		\caption{Los 3 pixeles con mayor varianza}
+		\caption{50 pixeles en una zona no tan significativa}
 		\label{fig:subfig1}
 	\end{subfigure}
 	\begin{subfigure}{0.5\textwidth}
 		\includegraphics[width=0.9\linewidth]{Imagenes/3pixeles.png}
-		\caption{50 pixeles en una zona de varianza media}
+		\caption{Los 3 pixeles mas significativos}
 		\label{fig:subfig2}
 	\end{subfigure}
 	% OJO: el caption siempre va antes del label
 	\label{fig:subfigs}
 \end{figure}
 
-Sin embargo, encontramos que cuando tenemos solo un pixel. Sin importar si este es significativo o no, la performance del modelo tiende a aumentar a medida
-que el numero de vecinos es mayor. En este caso, a partir de los gráficos, pareciera ser que k = 9 sería un buen número.
+Notemos que, a diferencia de lo que marca la intuición, la mejor cantidad de vecinos es 1 en ambos casos. Por otro lado, podemos notar que no es necesaria una gran cantidad de pixeles, sino que solamente con 3 pixeles que sean relevantes podemos tener un modelo con mas del 0.99 de precisión.
+
+\newpage
 
 \begin{figure}[ht!]
 	\begin{subfigure}{0.5\textwidth}
@@ -124,9 +190,14 @@ que el numero de vecinos es mayor. En este caso, a partir de los gráficos, pare
 \end{figure}
 
 
+Sin embargo, hay un caso que escapa a la regla. Encontramos que cuando tenemos solo un pixel. Sin importar si este es significativo o no, la performance del modelo tiende a aumentar a medida que el numero de vecinos es mayor. En este caso, a partir de los gráficos, pareciera ser que k = 9 sería un buen número.
+
+\vspace{0.05cm}
+
+Cerrando esta sección, creo que podemos concluir que tomando los 3 pixeles de mayor varianza y k = 1, tenemos un excelente clasificador para distinguir entre la letra A y la letra L.
 
 
-
+\section{Clasificador Multiclase}
 
 
 
