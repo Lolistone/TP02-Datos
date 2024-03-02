@@ -461,21 +461,15 @@ for i in [1,2,3,4,8]:
     print(f"Precisión para árbol con profundidad {i}: {precision}")
     
 
-# b)evaluamos el rendimiento del modelo, para ello  utilizamos validación cruzada con k-folding
-# Itera sobre cada profundidad para luego obtener  media y estandar.Se obtiene la misma 
-#informacion que en el item a) se obsera que a mayor profundidad mayor es la media y menor la desviacioin estandar.
-#tambien se observa que a partir de la profundidad 4 los valores de media y desviacion son iguales.
-#(me magino que esto pasa porque son 5 letras,pero no estoy segura) 
+# b)evaluamos el rendimiento del modelo, para ello  utilizamos validación cruzada por un lado y luego k-folding
 
+#comparamos los arboles con validacion cruzada
 for i in [1,2,3,4,8]:
-    arbol = DecisionTreeClassifier(max_depth=i) 
-    arbol.fit(X_train, Y_train)
-    k_fold = KFold(n_splits=5, shuffle=True, random_state=42)
-    scores = cross_val_score(arbol, X_train, Y_train, cv=k_fold)
-    media = scores.mean()
-    std = scores.std()
-    print(f"Profundidad {i}: Precisión media: {media}, Desviación estándar: {std}")
-
+    arbol=DecisionTreeClassifier(max_depth=i)
+    arbol.fit(X_train,Y_train)
+    cross_val_score(arbol,X_train,Y_train,cv=5)
+    print(f"Rendimiento para profundidad {i} :  {cross_val_score(arbol,X_train,Y_train,cv=5).mean()}")
+  
 #c) para buscar el mejor modelo exploramos distintas combinaciones de hiperparametros
 #en este caso distintas profundidades del arbol
 
