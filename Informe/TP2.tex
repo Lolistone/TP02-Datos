@@ -27,17 +27,16 @@
 
 \section{Introducción}  \vspace{0.1cm}
 
-\subsection{Fuente de datos} \vspace{0.1cm}
+\subsection{Fuente de datos} \vspace{0.2cm}
 
 A lo largo de este proyecto, trabajaremos con un conjunto de datos de imágenes denominado Sign
-Language MNIST, el cual se encuentra en formato csv, donde cada imagen del set de datos representa una letra en lenguaje de
-señas americano. El link al dataset es el siguiente https://www.kaggle.com/datasets/datamunge/sign-language-mnist.
+Language MNIST\footnote{Link al dataset https://www.kaggle.com/datasets/datamunge/sign-language-mnist}, el cual se encuentra en formato csv, donde cada imagen del set de datos representa una letra en lenguaje de señas americano. El link al dataset se encuentra al pie de página.
 
-\subsection{Análisis exploratorio de datos}  \vspace{0.1cm}
+\subsection{Análisis exploratorio de datos}  \vspace{0.2cm}
 
-Antes de ponernos a trabajar con los datos, necesitamos saber mas acerca de ellos. Sabemos que, cada fila del dataset representa una imagen de 28x28 pixeles en escala de grises que corresponde a una letra en lenguaje de señas. Miremos a continuación un pequeño fragmento del mismo.
+Antes de ponernos a trabajar con los datos, necesitamos saber mas acerca de ellos. Sabemos que, cada fila del dataset representa una imagen de 28x28 pixeles en escala de grises que corresponde a una letra en lenguaje de señas. Miremos a continuación un pequeño fragmento del mismo. En este, podremos ver las semejanzas y diferencias que tenemos entre las distintas letras. También, se puede ver en menor medida similitudes entre letras de la misma clase.
 
- \vspace{0.1cm}
+ \vspace{0.2cm}
 
 \begin{figure}[h]
   \centering
@@ -46,7 +45,7 @@ Antes de ponernos a trabajar con los datos, necesitamos saber mas acerca de ello
   \label{fig:Tabla 1}
 \end{figure}
 
- \vspace{0.1cm}
+ \vspace{0.2cm}
 
 A partir del gráfico anterior, podemos inferir que no todos los pixeles son realmente relevantes para diferenciar imágenes entre si. Por ejemplo, podemos ver
 que aquellos pixeles correspondientes al fondo no aportan información alguna. ¿Cuántos pixeles necesitaremos realmente para diferenciar las imágenes? \vspace{0.05cm}
