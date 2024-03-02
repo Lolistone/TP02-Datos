@@ -463,8 +463,6 @@ plt.savefig('1pixelbajo.png', dpi = 400)
 plt.show()
 
 # Si bien la precision bajó notablemente, el resultado es el mismo, con un k = 9 el modelo mejora notoriamente.
-
-<<<<<<< HEAD
 del clf
 del X, X_test, X_test_1, X_train, X_train_1, Y, y_test
 del df_al
@@ -473,13 +471,7 @@ del pixeles, maxima_varianza
 del resultados, resultados_test, resultados_train
 #%% Clasificación multiclase
 
-#Filtro las vocales a,e,i,o,u 
-=======
-#%%
-# Clasificacion multiclase
-
 # Filtro las vocales a,e,i,o,u 
->>>>>>> 122fe3fd7c71bf057138fad704e8ca846cc1e22e
 Xvocal = df_sign[df_sign["label"].isin([0,4,8,14,20])]
 Yvocal=Xvocal[["label"]]
 
