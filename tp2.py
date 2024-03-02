@@ -16,7 +16,7 @@ carpeta = '~/Dropbox/UBA/2024/LaboDeDatos/TP02/'
 
 
 # Importamos el archivo .csv
-df_sign = pd.read_csv('sign_mnist_train.csv')
+df_sign = pd.read_csv(carpeta + 'sign_mnist_train.csv')
 
 # Creo un diccionario label -> letra.
 letras : dict = {0 : 'A', 1 : 'B', 2 : 'C', 3 : 'D', 4 : 'E', 5 : 'F', 6 : 'G',
