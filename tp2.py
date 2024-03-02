@@ -11,13 +11,19 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from sklearn.model_selection import train_test_split
 from sklearn.neighbors import KNeighborsClassifier
+from sklearn.model_selection import RandomizedSearchCV
+from sklearn.tree import DecisionTreeClassifier,plot_tree,export_graphviz
+import graphviz
+from sklearn.model_selection import cross_val_score
+from sklearn.metrics import accuracy_score # lo uso para la precision
+from sklearn.metrics import ConfusionMatrixDisplay, classification_report # genera matriz confusion
 
 # Guardamos la ruta a la carpeta donde está el csv.
 carpeta = '~/Dropbox/UBA/2024/LaboDeDatos/TP02/'
 
 
 # Importamos el archivo .csv
-df_sign = pd.read_csv(carpeta + 'sign_mnist_train.csv')
+df_sign = pd.read_csv( 'sign_mnist_train.csv')
 
 # Creo un diccionario label -> letra.
 letras : dict = {0 : 'A', 1 : 'B', 2 : 'C', 3 : 'D', 4 : 'E', 5 : 'F', 6 : 'G',
@@ -458,6 +464,7 @@ plt.show()
 
 # Si bien la precision bajó notablemente, el resultado es el mismo, con un k = 9 el modelo mejora notoriamente.
 
+<<<<<<< HEAD
 del clf
 del X, X_test, X_test_1, X_train, X_train_1, Y, y_test
 del df_al
@@ -467,67 +474,119 @@ del resultados, resultados_test, resultados_train
 #%% Clasificación multiclase
 
 #Filtro las vocales a,e,i,o,u 
+=======
+#%%
+# Clasificacion multiclase
+
+# Filtro las vocales a,e,i,o,u 
+>>>>>>> 122fe3fd7c71bf057138fad704e8ca846cc1e22e
 Xvocal = df_sign[df_sign["label"].isin([0,4,8,14,20])]
 Yvocal=Xvocal[["label"]]
 
+# Separamos los label
+Xvocal = Xvocal.drop(columns = ['label'])
+
+
 # Dividimos en test(30%) y train(70%)
-
-X_train, X_test, Y_train, Y_test = train_test_split(Xvocal, Yvocal, test_size = 0.3,shuffle=True,random_state=50)
-
-
-#a)
-from sklearn.model_selection import train_test_split
-from sklearn.model_selection import RandomizedSearchCV
-from sklearn.tree import DecisionTreeClassifier,plot_tree,export_graphviz
-import graphviz
-from sklearn.model_selection import cross_val_score
-from sklearn.model_selection import KFold
-from sklearn.metrics import accuracy_score #lo uso para la precision
+X_train, X_test, Y_train, Y_test = train_test_split(Xvocal, Yvocal, 
+                                                    test_size = 0.3,
+                                                    shuffle=True,
+                                                    random_state=50)
 
 # arboles de diferentes profundidades, se observa que la precision es la misma a partir de h=4
-for i in [1,2,3,4,8]:
-    arbol= DecisionTreeClassifier(max_depth=i)
+valores_prof=[1,2,3,4,8,10,14]
+resultados_test  = np.zeros(len(valores_prof))
+resultados_train = np.zeros(len(valores_prof))
+
+for i, prof in enumerate(valores_prof):
+    arbol= DecisionTreeClassifier(max_depth=prof)
     arbol.fit(X_train, Y_train)
     Y_pred = arbol.predict(X_test)
     precision = accuracy_score(Y_test, Y_pred)
-    print(f"Precisión para árbol con profundidad {i}: {precision}")
+    resultados_train[i] = arbol.score(X_train, Y_train)
+    resultados_test[i]  = precision
+    print(f"Precisión para árbol con profundidad {prof}: {precision}")
     
+plt.plot(valores_prof, resultados_train, label = 'Train')
+plt.plot(valores_prof, resultados_test, label = 'Test')
+plt.legend()
+plt.title('Performance del Arbol de decision')
+plt.xlabel('Nivel de profundidad')
+plt.ylabel('Accuracy')
+plt.xticks(valores_prof)
+plt.ylim(0.35,1.05)
+plt.savefig('primer_prueba_arbol.png', dpi = 400)
+plt.show()
 
 # b)evaluamos el rendimiento del modelo, para ello  utilizamos validación cruzada por un lado y luego k-folding
 
 #comparamos los arboles con validacion cruzada
-for i in [1,2,3,4,8]:
-    arbol=DecisionTreeClassifier(max_depth=i)
+
+valores_prof=[1,2,3,4,8,10,14]
+resultados_cross = np.zeros(len(valores_prof))
+
+for i, prof in enumerate(valores_prof):
+    arbol=DecisionTreeClassifier(max_depth=prof)
     arbol.fit(X_train,Y_train)
     cross_val_score(arbol,X_train,Y_train,cv=5)
-    print(f"Rendimiento para profundidad {i} :  {cross_val_score(arbol,X_train,Y_train,cv=5).mean()}")
-  
+    score = cross_val_score(arbol,X_train,Y_train,cv=5).mean()
+    resultados_cross[i]  = score
+    
+    print(f"Rendimiento para profundidad {prof} :  {score}")
+
+plt.plot(valores_prof, resultados_cross)
+plt.title('Performance del Arbol de decision con K-Fold Cross Validation')
+plt.xlabel('Nivel de profundidad')
+plt.ylabel('Rendimiento')
+plt.xticks(valores_prof)
+plt.ylim(0.35,1.05)
+plt.savefig('KFold_prueba_arbol.png', dpi = 400)
+plt.show()  
+
 #c) para buscar el mejor modelo exploramos distintas combinaciones de hiperparametros
 #en este caso distintas profundidades del arbol
 
-hyper_params = {"max_depth" : [1,2,3,4,8] }
+hyper_params = {'criterion' : ["gini", "entropy"],
+                 "max_depth" : [1,2,3,4,8,10,14] } 
 
 arbol= DecisionTreeClassifier()
-clf = RandomizedSearchCV(arbol, hyper_params, random_state=0,n_iter=3)
-clf.fit(Xvocal, Yvocal)
+clf = RandomizedSearchCV(arbol, hyper_params, random_state=0,n_iter=5)
+# clf.fit(Xvocal, Yvocal) # mepa que van los datos train
+clf.fit(X_train, Y_train) 
 clf.best_params_
 clf.best_score_
 
-clf.predict(X_test)
-clf.score(X_test,Y_test) 
+Y_pred = clf.predict(X_test)
+clf.score(X_test,Y_test)
 
+vocalesB = np.array(['A','E','I','O','U'])
 
+print(classification_report(Y_test, Y_pred, target_names=vocalesB)) # recall/precision
+
+# Armamos matriz de confusion para el mejor modelo
+
+ConfusionMatrixDisplay.from_estimator(clf, X_test, Y_test,
+                                      display_labels=vocalesB)
+plt.tight_layout()
+plt.xlabel("Vocal predecida")
+plt.ylabel("Vocal verdadera")
+plt.title('Matriz de confusión sobre datos de Test')
+plt.gcf().set_size_inches(7,6)
+plt.savefig('matriz_confusion_arbol.png', dpi = 300)
+plt.show()
+# parece que a mas profundida mejora, lo cual es logico por que tenemos +700pixeles
+# pero a partir de 10 no crece tanto
 
 #Grafico el que considero el mejor modelo, es decir el arbol de profundidad 4, y guardo la imagen
 
-
-arbol = DecisionTreeClassifier(max_depth=4) 
+arbol = DecisionTreeClassifier(criterion='gini',
+                               max_depth=14) 
 arbol.fit(X_train, Y_train)
 
-dot_data = export_graphviz(arbol, out_file=None, feature_names= Xvocal.columns,
-class_names= ["A", "E","I","O","U"],
-filled=True, rounded=True,
-special_characters=True)
+dot_data = export_graphviz(arbol, out_file=None, 
+                           feature_names= Xvocal.columns,
+                           class_names= vocalesB,
+                           filled=True, rounded=True,
+                           special_characters=True)
 graph = graphviz.Source(dot_data) 
-graph.render("Que vocal es", format= "png")
-
+graph.render("Que_vocal_es", format= "png")
