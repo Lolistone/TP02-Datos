@@ -535,6 +535,19 @@ plt.ylim(0.35,1.05)
 plt.savefig('KFold_prueba_arbol.png', dpi = 400)
 plt.show()  
 
+#graficamos los resultados con kfold y los de resultado_Test 
+plt.plot(valores_prof, resultados_cross, label = 'Train')
+plt.plot(valores_prof, resultados_test, label = 'Test')
+plt.legend()
+plt.title('Performance del Arbol de decision')
+plt.xlabel('Nivel de profundidad')
+plt.ylabel('Accuracy')
+plt.xticks(valores_prof)
+plt.ylim(0.35,1.05)
+plt.savefig('tercer_Grafico_relacion l.png', dpi = 400)
+plt.show()
+
+
 #c) para buscar el mejor modelo exploramos distintas combinaciones de hiperparametros
 #en este caso distintas profundidades del arbol
 
