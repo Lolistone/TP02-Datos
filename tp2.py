@@ -9,11 +9,12 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
+import graphviz
+import six
 from sklearn.model_selection import train_test_split
 from sklearn.neighbors import KNeighborsClassifier
-from sklearn.model_selection import RandomizedSearchCV
+from sklearn.model_selection import GridSearchCV
 from sklearn.tree import DecisionTreeClassifier,plot_tree,export_graphviz
-import graphviz
 from sklearn.model_selection import cross_val_score
 from sklearn.metrics import accuracy_score # lo uso para la precision
 from sklearn.metrics import ConfusionMatrixDisplay, classification_report # genera matriz confusion
@@ -23,7 +24,7 @@ carpeta = '~/Dropbox/UBA/2024/LaboDeDatos/TP02/'
 
 
 # Importamos el archivo .csv
-df_sign = pd.read_csv( 'sign_mnist_train.csv')
+df_sign = pd.read_csv(carpeta + 'sign_mnist_train.csv')
 
 # Creo un diccionario label -> letra.
 letras : dict = {0 : 'A', 1 : 'B', 2 : 'C', 3 : 'D', 4 : 'E', 5 : 'F', 6 : 'G',
@@ -469,11 +470,12 @@ del df_al
 del i, k
 del pixeles, maxima_varianza
 del resultados, resultados_test, resultados_train
+
 #%% Clasificación multiclase
 
 # Filtro las vocales a,e,i,o,u 
 Xvocal = df_sign[df_sign["label"].isin([0,4,8,14,20])]
-Yvocal=Xvocal[["label"]]
+Yvocal = Xvocal[["label"]]
 
 # Separamos los label
 Xvocal = Xvocal.drop(columns = ['label'])
@@ -485,113 +487,174 @@ X_train, X_test, Y_train, Y_test = train_test_split(Xvocal, Yvocal,
                                                     shuffle=True,
                                                     random_state=50)
 
-# arboles de diferentes profundidades, se observa que la precision es la misma a partir de h=4
-valores_prof=[1,2,3,4,8,10,14]
-resultados_test  = np.zeros(len(valores_prof))
-resultados_train = np.zeros(len(valores_prof))
+# La idea, es no utilizar los datos de test sino hasta el final.
+X_train, X_val, Y_train, Y_val = train_test_split(X_train, Y_train, 
+                                                    test_size = 0.3,
+                                                    shuffle=True,
+                                                    random_state = 13)
 
-for i, prof in enumerate(valores_prof):
-    arbol= DecisionTreeClassifier(max_depth=prof)
+# Arboles de diferentes profundidades.
+profundidad = range(1,15)
+resultados_val  = np.zeros(len(profundidad))
+resultados_train = np.zeros(len(profundidad))
+
+for i in profundidad:
+    # Armo el arbol de profundidad i y lo entreno.
+    arbol= DecisionTreeClassifier(max_depth = i)
     arbol.fit(X_train, Y_train)
-    Y_pred = arbol.predict(X_test)
-    precision = accuracy_score(Y_test, Y_pred)
-    resultados_train[i] = arbol.score(X_train, Y_train)
-    resultados_test[i]  = precision
-    print(f"Precisión para árbol con profundidad {prof}: {precision}")
     
-plt.plot(valores_prof, resultados_train, label = 'Train')
-plt.plot(valores_prof, resultados_test, label = 'Test')
+    # Genero y guardo la precision de mi modelo
+    Y_pred = arbol.predict(X_val)
+    precision = accuracy_score(Y_val, Y_pred)
+    
+    # Guardo resultados de train y validation.
+    resultados_train[i-1] = arbol.score(X_train, Y_train)
+    resultados_val[i-1]  = precision
+    
+    print(f"Precisión para árbol con profundidad {i}: {precision}")
+
+plt.plot(profundidad, resultados_train, label = 'Train')
+plt.plot(profundidad, resultados_val, label = 'Validation')
 plt.legend()
 plt.title('Performance del Arbol de decision')
 plt.xlabel('Nivel de profundidad')
 plt.ylabel('Accuracy')
-plt.xticks(valores_prof)
+plt.xticks(profundidad)
 plt.ylim(0.35,1.05)
 plt.savefig('primer_prueba_arbol.png', dpi = 400)
 plt.show()
 
-# b)evaluamos el rendimiento del modelo, para ello  utilizamos validación cruzada por un lado y luego k-folding
+# Notamos que a partir de k = 10, la precision se estabiliza notoriamente.
+# Cuando tenemos modelos con performance similares, nos quedamos siempre con el mas sencillo.
 
-#comparamos los arboles con validacion cruzada
+# Recuperamos el conjunto de train original.
+X_train = X_train.append(X_val, ignore_index=True)
+Y_train = Y_train.append(Y_val, ignore_index=True)
 
-valores_prof=[1,2,3,4,8,10,14]
-resultados_cross = np.zeros(len(valores_prof))
+# Elimino variables que no uso.
+del Xvocal, Yvocal
+del X_val, Y_val
 
-for i, prof in enumerate(valores_prof):
-    arbol=DecisionTreeClassifier(max_depth=prof)
+# Hacemos el mismo test, pero esta vez utilizando k-fold cross validation.
+profundidad = range(1,15)
+resultados_cross = np.zeros(len(profundidad))
+
+for i in profundidad:
+    arbol=DecisionTreeClassifier(max_depth = i)
     arbol.fit(X_train,Y_train)
-    cross_val_score(arbol,X_train,Y_train,cv=5)
-    score = cross_val_score(arbol,X_train,Y_train,cv=5).mean()
-    resultados_cross[i]  = score
     
-    print(f"Rendimiento para profundidad {prof} :  {score}")
+    # cross_val_score(arbol,X_train,Y_train, cv=5) La comente porque no entendia para q esta.
+    score = cross_val_score(arbol, X_train, Y_train, cv=5).mean() 
+    resultados_cross[i-1]  = score
+    
+    print(f"Rendimiento para profundidad {i} :  {score}")
 
-plt.plot(valores_prof, resultados_cross)
+plt.plot(profundidad, resultados_cross)
 plt.title('Performance del Arbol de decision con K-Fold Cross Validation')
 plt.xlabel('Nivel de profundidad')
 plt.ylabel('Rendimiento')
-plt.xticks(valores_prof)
+plt.xticks(profundidad)
 plt.ylim(0.35,1.05)
 plt.savefig('KFold_prueba_arbol.png', dpi = 400)
 plt.show()  
 
-#graficamos los resultados con kfold y los de resultado_Test 
-plt.plot(valores_prof, resultados_cross, label = 'Train')
-plt.plot(valores_prof, resultados_test, label = 'Test')
-plt.legend()
+# El resultado es similar, a partir de ~10 se es estabiliza.
+
+# Graficamos los resultados con kfold y los de resultado_val.
+plt.plot(profundidad, resultados_cross, label = 'K-fold Cross Validation')
+plt.plot(profundidad, resultados_val, label = 'Validation')
 plt.title('Performance del Arbol de decision')
 plt.xlabel('Nivel de profundidad')
 plt.ylabel('Accuracy')
-plt.xticks(valores_prof)
-plt.ylim(0.35,1.05)
+plt.xticks(profundidad)
+plt.ylim(0.35,1.04)
+plt.legend()
 plt.savefig('tercer_Grafico_relacion l.png', dpi = 400)
 plt.show()
 
-
-#c) para buscar el mejor modelo exploramos distintas combinaciones de hiperparametros
-#en este caso distintas profundidades del arbol
-
+# Para buscar el mejor modelo exploramos distintas combinaciones de hiperparametros.
+# Ya vimos antes que alturas eran mas relevantes por eso tomamos solamente un subconjunto.
 hyper_params = {'criterion' : ["gini", "entropy"],
-                 "max_depth" : [1,2,3,4,8,10,14] } 
+                 "max_depth" : [10, 11, 12, 13, 14] } 
 
+# Realizamos un Grid Search.
 arbol= DecisionTreeClassifier()
-clf = RandomizedSearchCV(arbol, hyper_params, random_state=0,n_iter=5)
-# clf.fit(Xvocal, Yvocal) # mepa que van los datos train
-clf.fit(X_train, Y_train) 
+clf = GridSearchCV(arbol, hyper_params)
+clf.fit(X_train, Y_train)
+
+# Pedimos los mejores parametros. 
 clf.best_params_
 clf.best_score_
 
-Y_pred = clf.predict(X_test)
-clf.score(X_test,Y_test)
+# Los resultados del grid search se pueden ver una tabla
+resultados = pd.DataFrame(clf.cv_results_)
+resultados = resultados[['param_criterion', 'param_max_depth', 'mean_test_score']]
 
+# Renombro las columnas que me interesan.
+resultados.rename(columns = {'param_criterion' : 'Criterio',
+                             'param_max_depth' : 'Altura',
+                             'mean_test_score': 'Precision'},
+                  inplace = True)
+
+resultados = resultados.round(4)
+
+#%% Funcion auxiliar para tablas
+def render_mpl_table(data, col_width=3.0, row_height=0.625, font_size=14,
+                     header_color='#40466e', row_colors=['#f1f1f2', 'w'], edge_color='w',
+                     bbox=[0, 0, 1, 1], header_columns=0,
+                     ax=None, **kwargs):
+    if ax is None:
+        size = (np.array(data.shape[::-1]) + np.array([0, 1])) * np.array([col_width, row_height])
+        fig, ax = plt.subplots(figsize=size)
+        ax.axis('off')
+
+    mpl_table = ax.table(cellText=data.values, bbox=bbox, colLabels=data.columns, **kwargs)
+
+    mpl_table.auto_set_font_size(False)
+    mpl_table.set_fontsize(font_size)
+
+    for k, cell in six.iteritems(mpl_table._cells):
+        cell.set_edgecolor(edge_color)
+        if k[0] == 0 or k[1] < header_columns:
+            cell.set_text_props(weight='bold', color='w')
+            cell.set_facecolor(header_color)
+        else:
+            cell.set_facecolor(row_colors[k[0]%len(row_colors) ])
+    return ax
+
+# Exporto la tabla.
+render_mpl_table(resultados, header_columns=0, col_width=6.2)
+
+#%% Recall/Precision
 vocalesB = np.array(['A','E','I','O','U'])
-
 print(classification_report(Y_test, Y_pred, target_names=vocalesB)) # recall/precision
 
-# Armamos matriz de confusion para el mejor modelo
+# Genero el mejor arbol a nuestro criterio.
+arbol = DecisionTreeClassifier(criterion='entropy', max_depth= 10) 
+arbol.fit(X_train, Y_train)
 
-ConfusionMatrixDisplay.from_estimator(clf, X_test, Y_test,
+# Una vez, ya estamos seguros de que tenemos el mejor modelo, hacemos una prueba con los datos de test.
+Y_pred = arbol.predict(X_test)
+arbol.score(X_test, Y_test)
+
+# Armamos matriz de confusion para el mejor modelo
+ConfusionMatrixDisplay.from_estimator(arbol, X_test, Y_test,
                                       display_labels=vocalesB)
+
 plt.tight_layout()
 plt.xlabel("Vocal predecida")
 plt.ylabel("Vocal verdadera")
 plt.title('Matriz de confusión sobre datos de Test')
 plt.gcf().set_size_inches(7,6)
-plt.savefig('matriz_confusion_arbol.png', dpi = 300)
+plt.savefig('matriz_confusion_arbol.png', dpi = 400)
 plt.show()
-# parece que a mas profundida mejora, lo cual es logico por que tenemos +700pixeles
-# pero a partir de 10 no crece tanto
 
-#Grafico el que considero el mejor modelo, es decir el arbol de profundidad 4, y guardo la imagen
-
-arbol = DecisionTreeClassifier(criterion='gini',
-                               max_depth=14) 
-arbol.fit(X_train, Y_train)
-
+# Grafico el modelo
 dot_data = export_graphviz(arbol, out_file=None, 
-                           feature_names= Xvocal.columns,
+                           feature_names= X_train.columns,
                            class_names= vocalesB,
                            filled=True, rounded=True,
                            special_characters=True)
+
 graph = graphviz.Source(dot_data) 
 graph.render("Que_vocal_es", format= "png")

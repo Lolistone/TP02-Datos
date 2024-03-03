@@ -197,31 +197,37 @@ Cerrando esta sección, creo que podemos concluir que tomando los 3 pixeles de m
 
 
 \section{Clasificador Multiclase}
-\vspace{0.05cm}
-Para determinar la vocal correspondiente a una señal en una imagen,se generaron arboles de distintas profundidades:1,2,3,4,8y14.Se registraron los valores de precision asociado a cada arbol, en la cual se observo que el arbol que mostraba mayor precision era el de profundidad 14.
 
-en el siguiente grafico se muestran las diferentes profundidades de los arboles junto con sus respectivas precisiones,tanto para la intancia de entrenamiento(train) como para la de prueba(test).es evidente que a medida que aumenta la profundidad del arbol, el rendimiento del modelo mejora.Sin embargo, se nota que a partir de la profundidad 10 la precision no varia mucho.
+\vspace{0.05cm}
+
+\subsection{¿A cuál de las vocales corresponde la seña en la imagen?}
+
+En esta sección, se intentará encontrar un modelo de arbol de decisión que prediga las vocales. Para esto, armaremos un dataset a partir del original el cual contenga unicamente estas. \vspace{0.05cm}
+
+A fin de encontrar el mejor modelo, realizamos distintas pruebas modificando los paramentros del modelo. En primer lugar, lo que hicimos fue testear alturas
+entre 1 y 14. Para esto, utilizamos dos métodos, por un lado dividimos el el dataset original en train, validation y test, para luego entrenar
+el modelo con los datos de train y medirlo contra los datos de validation. 
 
 \begin{figure}[h]
   \centering
-  \includegraphics[width=0.8\textwidth]{primer_prueba_arbol.png}
-  \caption{-}
+  \includegraphics[width=0.8\textwidth]{Imagenes/primer_prueba_arbol.png}
+  \caption{Prueba para distintas profundidades}
   \label{fig:Tabla 1}
 \end{figure}
 
-\vspace{0.05cm}
+\newpage
 
-Por otro lado,para poder comparar y seleccionar el mejor arbol de decision, se empleo validacion cruzada con k-folding utilizando los datos  train. El resultado obtenido parece ser similar a los rendimientos de prueba del grafico anterior.Es por esto, que se genero otro grafico.
-
+Por otro lado,para poder comparar y seleccionar el mejor arbol de decision, se empleo validacion cruzada con k-folding utilizando los datos de train, los cuales
+en este caso son la union entre los datos de train y validacion anteriores. Veamos entonces los resultados comparados con el test anterior.
 
 \begin{figure}[ht!]
 	\begin{subfigure}{0.5\textwidth}
-		\includegraphics[width=0.9\linewidth]{KFold_prueba_arbol.png} 
+		\includegraphics[width=0.9\linewidth]{Imagenes/KFold_prueba_arbol.png} 
 		\caption{KFold}
 		\label{fig:subfig1}
 	\end{subfigure}
 	\begin{subfigure}{0.5\textwidth}
-		\includegraphics[width=0.9\linewidth]{tercer_Grafico_relacion.png}
+		\includegraphics[width=0.9\linewidth]{Imagenes/tercer_Grafico_relacion.png}
 		\caption{-}
 		\label{fig:subfig2}
 	\end{subfigure}
@@ -229,14 +235,24 @@ Por otro lado,para poder comparar y seleccionar el mejor arbol de decision, se e
 	\label{fig:subfigs}
 \end{figure}
 
-
-En busqueda del mejor modelo, se exploraron diversas combinaciones de hiper-parametros. Posteriormente, se obtuvieron maztrices de clasificacion de multiclase, en las cuales se destacan la precision y recall. Se observo que la precision varia entre un 92% y un 97%, mientras que el recall varia entre 93% y un 96%, lo cual nos estaria indicando que el modelo uilizado es bueno.
-
-Para poder visualizar mejor estos valores, se recurrió a la matriz de confusión. Esta matriz es una herramienta que muestra de manera detallada cómo el modelo clasifica las muestras en cada una de las clases .Cada fila de la matriz representa la clase real, mientras que cada columna representa la clase predicha por el modelo.
+En busqueda del mejor modelo, se exploraron diversas combinaciones de hiper-parametros. Para eso se realiza un Grid Search tomando en cuenta los profundidades entre 10 y 14, y los criterios, entropia y gini. A continuación tenemos una tabla con los resultados.
 
 \begin{figure}[h]
   \centering
-  \includegraphics[width=0.8\textwidth]{matriz_confusion_arbol.png}
+  \includegraphics[width=0.8\textwidth]{Imagenes/conclusion.png}
+  \caption{matriz confusion}
+  \label{fig:Tabla 1}
+\end{figure}
+
+Podemos notar, primero que utlizar entropia es un poco mas eficiente que utilizar gini. Y, en segundo lugar, que el rendimiento entre profundidades practicamente no difiere. Por lo tanto, tomaremos aquel de menor profundidad en busca de tener un modelo mas simple. De esta manera, el modelo que escogeremos al final es un arbol de altura 10 con el criterio entropia. \vspace{0.05cm}
+
+Ahora, ya con nuestro modelo elegido, a través de una prueba de precisión con los conjuntos de test, obtenemos una precision del 0.967, la cual nos parece realmente acertada. \vspace{0.05cm}
+
+Para poder visualizar mejor donde acierta y donde no nuestro modelo, se recurrió a la matriz de confusión. Esta matriz es una herramienta que muestra de manera detallada cómo el modelo clasifica las muestras en cada una de las clases. Donde cada fila de la matriz representa la clase real, mientras que cada columna representa la clase predicha por el modelo.
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.8\textwidth]{Imagenes/matriz_confusion_arbol.png}
   \caption{matriz confusion}
   \label{fig:Tabla 1}
 \end{figure}
