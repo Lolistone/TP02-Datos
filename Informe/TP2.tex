@@ -235,7 +235,7 @@ en este caso son la union entre los datos de train y validacion anteriores. Veam
 	\label{fig:subfigs}
 \end{figure}
 
-En busqueda del mejor modelo, se exploraron diversas combinaciones de hiper-parametros. Para eso se realiza un Grid Search tomando en cuenta los profundidades entre 10 y 14, y los criterios, entropia y gini. A continuación tenemos una tabla con los resultados.
+A raiz, de los gráficos anteriores, pudimos notar que a partir de la altura 10, el modelo tiende a mantener su precision. Por eso, nos quedaremos con estos valores e iremos testeando que ocurre combinandolos con otros hiperparametros.. Para eso, realizamos un Grid Search tomando en cuenta los profundidades anteriormente nombradas, y los criterios, entropia y gini. A continuación tenemos una tabla con los resultados.
 
 \begin{figure}[h]
   \centering
@@ -244,19 +244,25 @@ En busqueda del mejor modelo, se exploraron diversas combinaciones de hiper-para
   \label{fig:Tabla 1}
 \end{figure}
 
+\subsection{Conclusiones}
+
 Podemos notar, primero que utlizar entropia es un poco mas eficiente que utilizar gini. Y, en segundo lugar, que el rendimiento entre profundidades practicamente no difiere. Por lo tanto, tomaremos aquel de menor profundidad en busca de tener un modelo mas simple. De esta manera, el modelo que escogeremos al final es un arbol de altura 10 con el criterio entropia. \vspace{0.05cm}
 
-Ahora, ya con nuestro modelo elegido, a través de una prueba de precisión con los conjuntos de test, obtenemos una precision del 0.967, la cual nos parece realmente acertada. \vspace{0.05cm}
+\newpage
+
+\subsection{Matriz de Confusion y Test}
 
 Para poder visualizar mejor donde acierta y donde no nuestro modelo, se recurrió a la matriz de confusión. Esta matriz es una herramienta que muestra de manera detallada cómo el modelo clasifica las muestras en cada una de las clases. Donde cada fila de la matriz representa la clase real, mientras que cada columna representa la clase predicha por el modelo.
 
-\begin{figure}[h]
+\begin{figure}[ht]
   \centering
-  \includegraphics[width=0.8\textwidth]{Imagenes/matriz_confusion_arbol.png}
+  \includegraphics[width=0.6\textwidth]{Imagenes/matriz_confusion_arbol.png}
   \caption{matriz confusion}
   \label{fig:Tabla 1}
 \end{figure}
 
-Finalmente, gracias a la informacion proporcionada, aseguramos que el mejor modelo es el arbol de decision con 14 de profundidad.
+Podemos notar, que nuestro modelo tiende a confundir las letras I y A por un lado, y las letras U e I. Sin embargo, tambien vemos que tiene un excelente desempeño mostrando una precisión del 0.9678.
+
+Cabe aclarar, que tanto la matriz como la precision fueron calculadas a partir de los datos de test, los cuales, habiamos reservado hasta este momento.
 
 \end{document}
