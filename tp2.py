@@ -1,27 +1,26 @@
 # -*- coding: utf-8 -*-
 """
-Created on Tue Feb 27 19:52:48 2024
+Trabajo Practico N°2: clasificación y selección de modelos, utilizando validación cruzada.
+Materia: Laboratorio de Datos - Verano 2024
 
-@author: lolocrsn 
+Integrantes: ... , Martinelli Lorenzo, ... 
 """
 
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-import seaborn as sns
 import graphviz
-import six
+import six # Para graficar tablas
 from sklearn.model_selection import train_test_split
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.model_selection import GridSearchCV
-from sklearn.tree import DecisionTreeClassifier,plot_tree,export_graphviz
+from sklearn.tree import DecisionTreeClassifier,export_graphviz
 from sklearn.model_selection import cross_val_score
 from sklearn.metrics import accuracy_score # lo uso para la precision
 from sklearn.metrics import ConfusionMatrixDisplay, classification_report # genera matriz confusion
 
 # Guardamos la ruta a la carpeta donde está el csv.
 carpeta = '~/Dropbox/UBA/2024/LaboDeDatos/TP02/'
-
 
 # Importamos el archivo .csv
 df_sign = pd.read_csv(carpeta + 'sign_mnist_train.csv')
@@ -60,6 +59,7 @@ for ax in axe:
         ax[i].set_yticks([])
         
 plt.rcParams['figure.autolayout'] = True
+# Guarda la imagen y aumenta su dpi
 plt.savefig('atributos_relevantes.png', dpi = 400)
 plt.show()
 plt.close(fig)
@@ -89,12 +89,12 @@ ax.set_xticklabels(label) # Cambio por las letras los parametros del eje x
 
 plt.savefig('distribucion.png', dpi = 400)
 
-
 # Elimino las variables que no uso.
 del X, Y
 del label
 del i, j
-del ax, axe
+del ax, axe, fig, l
+del distribucion
 
 # Filtro en el dataset las letras, L, E y M.
 Xl = df_sign[df_sign['label'] == 11] 
@@ -157,11 +157,7 @@ plt.close(fig)
 # Elimino las variables que no utilizo.
 del Xl, Xm, Xe
 del i,j
-        
-# (Otra vez, esto va al informe pero mientras lo dejo documentado aca)
-# Viendo los dos graficos, se puede ver bien claro que hay letras que se parecen mucho entre si.
-# En este caso, la letra E y la letra M son muy similares entre si. Pero, son bastante diferentes 
-# a la letra L.
+del ax, axe, fig
 
 # Ahora, comparemos imagenes de una misma letra. En particular, la letra C.
 
@@ -192,9 +188,6 @@ plt.savefig('letra_C.png', dpi = 400)
 plt.show()
 plt.close(fig)     
 
-# Ahora, podemos ver claramente que hay ciertas diferencias entre una misma letra
-# por lo que tenemos que tener cuidado. 
-
 # Una posible solución, para encontrar los pixeles mas característicos es apilar las imagenes.
 Xc = df_sign[df_sign['label'] == 2]
 Xc = Xc.drop(['label'], axis = 1)
@@ -219,9 +212,7 @@ plt.close(fig)
 # Eliminamos variables
 del i, j
 del Xc
-
-# Podemos ver ahora, cuales son exactamente los atributos que identifican a la leta C. Y, además
-# determinar con esto donde esta la mayor semejanza entre estas.
+del label, ax, axe, fig
 
 #%% Construccion de modelo.
 
@@ -247,8 +238,6 @@ plt.title("Cantidad de imágenes por clase")
 plt.savefig('cantidad_letras_A_L.png', dpi = 400)
 plt.show()
 plt.close(fig)
-
-# Podemos observar que la cantidad de estas letras esta bastante balanceada.
 
 # Busco los pixeles mas significativos para distinguir entre la A y la L.
 
@@ -303,9 +292,8 @@ plt.close(fig)
 # Borro las variables que ya no necesito.
 del Xa, Xl, restaAL
 del cantA, cantL
-del ax, axe
-del i, label
-del fig
+del ax, axe, i, fig
+del valor
 
 # Separo los datos a predecir
 Y = df_al['label']
@@ -428,10 +416,6 @@ plt.ylim(0.65,1.00)
 plt.savefig('1pixelalto.png', dpi = 400)
 plt.show()
 
-
-# Tomando un solo pixel en una zona con bastante varianza, vemos que a medida que hay mas 
-# vecinos la precision aumenta. Donde parece que 9 seria un buen k.
-
 # Probemos una zona menos signficativa
 valores_k = range(1, 15)
 
@@ -470,6 +454,7 @@ del df_al
 del i, k
 del pixeles, maxima_varianza
 del resultados, resultados_test, resultados_train
+del valores_k, y_train
 
 #%% Clasificación multiclase
 
@@ -579,6 +564,7 @@ hyper_params = {'criterion' : ["gini", "entropy"],
 
 # Realizamos un Grid Search.
 arbol= DecisionTreeClassifier()
+# Notemos que, al no aclarar el parametro cv, por default realiza un Stratified KFold con k = 5.
 clf = GridSearchCV(arbol, hyper_params)
 clf.fit(X_train, Y_train)
 
@@ -658,3 +644,11 @@ dot_data = export_graphviz(arbol, out_file=None,
 
 graph = graphviz.Source(dot_data) 
 graph.render("Que_vocal_es", format= "png")
+
+# Eliminamos las variables que ya no usamos
+del arbol, clf, hyper_params
+del precision, profundidad
+del resultados, resultados_train, resultados_cross, resultados_val
+del score
+del vocalesB, i
+del X_test, Y_test, X_train, Y_train, Y_pred
