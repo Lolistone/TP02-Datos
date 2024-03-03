@@ -197,7 +197,50 @@ Cerrando esta sección, creo que podemos concluir que tomando los 3 pixeles de m
 
 
 \section{Clasificador Multiclase}
+\vspace{0.05cm}
+Para determinar la vocal correspondiente a una señal en una imagen,se generaron arboles de distintas profundidades:1,2,3,4,8y14.Se registraron los valores de precision asociado a cada arbol, en la cual se observo que el arbol que mostraba mayor precision era el de profundidad 14.
+
+en el siguiente grafico se muestran las diferentes profundidades de los arboles junto con sus respectivas precisiones,tanto para la intancia de entrenamiento(train) como para la de prueba(test).es evidente que a medida que aumenta la profundidad del arbol, el rendimiento del modelo mejora.Sin embargo, se nota que a partir de la profundidad 10 la precision no varia mucho.
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.8\textwidth]{primer_prueba_arbol.png}
+  \caption{-}
+  \label{fig:Tabla 1}
+\end{figure}
+
+\vspace{0.05cm}
+
+Por otro lado,para poder comparar y seleccionar el mejor arbol de decision, se empleo validacion cruzada con k-folding utilizando los datos  train. El resultado obtenido parece ser similar a los rendimientos de prueba del grafico anterior.Es por esto, que se genero otro grafico.
 
 
+\begin{figure}[ht!]
+	\begin{subfigure}{0.5\textwidth}
+		\includegraphics[width=0.9\linewidth]{KFold_prueba_arbol.png} 
+		\caption{KFold}
+		\label{fig:subfig1}
+	\end{subfigure}
+	\begin{subfigure}{0.5\textwidth}
+		\includegraphics[width=0.9\linewidth]{tercer_Grafico_relacion.png}
+		\caption{-}
+		\label{fig:subfig2}
+	\end{subfigure}
+	% OJO: el caption siempre va antes del label
+	\label{fig:subfigs}
+\end{figure}
+
+
+En busqueda del mejor modelo, se exploraron diversas combinaciones de hiper-parametros. Posteriormente, se obtuvieron maztrices de clasificacion de multiclase, en las cuales se destacan la precision y recall. Se observo que la precision varia entre un 92% y un 97%, mientras que el recall varia entre 93% y un 96%, lo cual nos estaria indicando que el modelo uilizado es bueno.
+
+Para poder visualizar mejor estos valores, se recurrió a la matriz de confusión. Esta matriz es una herramienta que muestra de manera detallada cómo el modelo clasifica las muestras en cada una de las clases .Cada fila de la matriz representa la clase real, mientras que cada columna representa la clase predicha por el modelo.
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.8\textwidth]{matriz_confusion_arbol.png}
+  \caption{matriz confusion}
+  \label{fig:Tabla 1}
+\end{figure}
+
+Finalmente, gracias a la informacion proporcionada, aseguramos que el mejor modelo es el arbol de decision con 14 de profundidad.
 
 \end{document}
