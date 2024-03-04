@@ -2,8 +2,9 @@
 """
 Trabajo Practico N°2: clasificación y selección de modelos, utilizando validación cruzada.
 Materia: Laboratorio de Datos - Verano 2024
+Contenido: Modelos de clasificacion KNN y Arbol de decision. Generacion de graficos y tablas.
 
-Integrantes: ... , Martinelli Lorenzo, ... 
+Integrantes: Chapana Puma Joselin , Martinelli Lorenzo, Padilla Ramiro Martin
 """
 
 import pandas as pd
@@ -16,8 +17,8 @@ from sklearn.neighbors import KNeighborsClassifier
 from sklearn.model_selection import GridSearchCV
 from sklearn.tree import DecisionTreeClassifier,export_graphviz
 from sklearn.model_selection import cross_val_score
-from sklearn.metrics import accuracy_score # lo uso para la precision
-from sklearn.metrics import ConfusionMatrixDisplay, classification_report # genera matriz confusion
+from sklearn.metrics import accuracy_score 
+from sklearn.metrics import ConfusionMatrixDisplay, classification_report 
 
 # Guardamos la ruta a la carpeta donde está el csv.
 carpeta = '~/Dropbox/UBA/2024/LaboDeDatos/TP02/'
