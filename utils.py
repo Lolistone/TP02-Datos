@@ -8,6 +8,7 @@ import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
 from sklearn.neighbors import KNeighborsClassifier
 
+
 #%% Funcion para testear la variacion de la precision en funcion de la #Atributos
  
 def vecinosAleatorios(kv: int, reps: int, cant_atributos: int, X, Y):

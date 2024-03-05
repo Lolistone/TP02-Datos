@@ -3,7 +3,6 @@
 \input{AEDmacros}
 \usepackage{caratula} % Version modificada para usar las macros de algo1 de ~> https://github.com/bcardiff/dc-tex
 
-
 \titulo{Trabajo Práctico 2}
 \subtitulo{Clasificación y Selección de Modelos}
 
@@ -22,7 +21,6 @@
 \graphicspath{{../static/}}
 
 \begin{document}
-
 \maketitle
 
 \section{Introducción}  \vspace{0.1cm}
@@ -41,7 +39,7 @@ Antes de ponernos a trabajar con los datos, necesitamos saber mas acerca de ello
 \begin{figure}[h]
   \centering
   \includegraphics[width=1.0\textwidth]{Imagenes/atributos\_relevantes.png}
-  \caption{Primeras nueve imagenes del dataset}
+  \caption{Primeras quince imagenes del dataset}
   \label{fig:Tabla 1}
 \end{figure}
 
@@ -62,7 +60,7 @@ Obs: Las letras J y Z no poseen ningún ejemplar puesto que requieren de movimie
   \centering
   \includegraphics[width=0.8\textwidth]{Imagenes/distribucion.png}
   \caption{Cantidad de muestras de cada letra}
-  \label{fig:Tabla 1}
+  \label{fig:Tabla 2}
 \end{figure}
 
 \newpage
@@ -72,12 +70,12 @@ presentan diferencias notorias o no. Para eso, comparemos por ejemplo, las letra
 
 \begin{figure}[ht!]
 	\begin{subfigure}{0.5\textwidth}
-		\includegraphics[width=0.9\linewidth]{Imagenes/letra_E_vs_L.png} 
+		\includegraphics[width=1\linewidth]{Imagenes/letra\_E\_vs\_L.png} 
 		\caption{Muestras de las letras E y L}
 		\label{fig:subfig1}
 	\end{subfigure}
 	\begin{subfigure}{0.5\textwidth}
-		\includegraphics[width=0.9\linewidth]{Imagenes/letra_E_vs_M.png}
+		\includegraphics[width=1\linewidth]{Imagenes/letra\_E\_vs\_M.png}
 		\caption{Muestras de las letras E y M}
 		\label{fig:subfig2}
 	\end{subfigure}
@@ -117,8 +115,19 @@ A partir de todo el análisis anterior, pudimos notar que no representa diferenc
 
 \subsection{¿La imagen corresponde a una seña de la L o a una seña de la A?} \vspace{0.1cm}
 
-En esta sección, trabajeremos con un subconjunto del dataset original, donde solo esten la letra A  y L. Nuestro objetivo, será encontrar un modelo que
-diferencie con la menor cantidad de pixeles posibles. Comencemos entonces, viendo las diferencias entre estas letras y cuantas muestras tenemos. 
+En esta sección, trabajeremos con un subconjunto del dataset original, donde solo esten las letras A  y L. Nuestro objetivo, será encontrar un modelo que
+diferencie estas letras con la menor cantidad de pixeles posibles. Comencemos entonces viendo cuantas muestras tenemos. 
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.5\textwidth]{Imagenes/cantidad\_letras\_A\_L.png}
+  \caption{Letra L - A}
+  \label{fig:Tabla 6}
+\end{figure}
+
+Sabemos entonces, que tenemos buena distribución lo que nos ayuda al armado de los conjuntos de train y test. Veamos ahora, las diferencias entres estas letras en la imagen a continuación.  Del lado izquierdo tenemos una comparativa entre todas letras L y las letras A apiladas, y del otro lado, tenemos la resta entre ambas, puesto que es de nuestro interes obtener las zonas de mayor varianza.
+
+\newpage
 
 \begin{figure}[ht!]
 	\begin{subfigure}{0.5\textwidth}
@@ -128,21 +137,12 @@ diferencie con la menor cantidad de pixeles posibles. Comencemos entonces, viend
 		\label{fig:subfig1}
 	\end{subfigure}
 	\begin{subfigure}{0.55\textwidth}
-		\includegraphics[width=1\linewidth]{Imagenes/cantidad\_letras\_A\_L.png}
-		\caption{Cantidad por clase}
+		\includegraphics[width=1\linewidth]{Imagenes/varianza.png}
+		\caption{L - A}
 		\label{fig:subfig2}
 	\end{subfigure}
 	% OJO: el caption siempre va antes del label
 	\label{fig:subfigs}
-\end{figure}
-
-Sabemos entonces, que tenemos buena distribución, y podemos ver de la imagen de la izquierda que pareceria que hay dos zonas que diferencian bien ambas letras, lo que vamos a hacer entonces es 'restar' ambas letras para asi encontrar donde estan los pixeles de mayor varianza. ¿Por qué los de mayor varianza? Puesto que son aquellos que representan mas la diferencia entre ambas imagenes. 
-
-\begin{figure}[h]
-  \centering
-  \includegraphics[width=0.8\textwidth]{Imagenes/varianza.png}
-  \caption{Letra L - A}
-  \label{fig:Tabla 1}
 \end{figure}
 
 Notamos que, la zona con mayor varianza seria en la zona mas oscura que aparece en el medio de la imagen o, en su defecto, la zona mas blanca. Para saber esto con precisión utilizamos una función de pandas que nos devuelve en una lista las 10 posiciones con los valores mas altos. Destacando, que los pixeles
@@ -150,51 +150,59 @@ mas representativos son el 301, 274 y 246.
 
 \subsection{Construcción del Modelo} \vspace{0.1cm}
 
-Una vez, que conocemos bastante acerca de nuestro dataset, estamos en condiciones de armar nuestro clasificador Knn. A fines de afinar nuestro modelo, hicimos pruebas utilizando distintas cantidades de pixeles, la idea es, utilizar la menor cantidad posible para asi no usar datasets tan grandes. \vspace{0.05cm}
-Como ya conociamos aquellos pixeles mas significativos, hicimos pruebas utilizando 1, 3 y 50 pixeles tomando a su vez, distinta cantidad de vecinos. 
-A continuación tenemos los resultados.
+Una vez, que conocemos bastante acerca de nuestro dataset, estamos en condiciones de armar nuestro clasificador Knn. A fines de afinar nuestro modelo, hicimos pruebas utilizando distintas cantidades de pixeles, la idea es, utilizar la menor cantidad posible para asi no usar datasets tan grandes. Veamos los resultados.
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.6\textwidth]{Imagenes/pixelesvsacc.png}
+  \caption{Pixeles vs Accuracy}
+  \label{fig:Tabla 1}
+\end{figure}
+
+\newpage
+
+Como se puede apreciar en la imagen anterior, la precisión aumenta de manera notable a partir de los 3 pixeles para luego estabilizarse alrededor de los 7.
+Veamos que ocurre ahora para algunos de estos valores si modificamos la cantidad de vecinos.
 
 \begin{figure}[ht!]
 	\begin{subfigure}{0.5\textwidth}
-		\includegraphics[width=0.9\linewidth]{Imagenes/50pixeles.png} 
-		\caption{50 pixeles en una zona no tan significativa}
+		\includegraphics[width=1\linewidth]{Imagenes/3pixeles.png} 
+		\caption{Pixeles mas significativos}
 		\label{fig:subfig1}
 	\end{subfigure}
 	\begin{subfigure}{0.5\textwidth}
-		\includegraphics[width=0.9\linewidth]{Imagenes/3pixeles.png}
-		\caption{Los 3 pixeles mas significativos}
+		\includegraphics[width=1\linewidth]{Imagenes/3pixelesRandom.png}
+		\caption{Pixeles aleatorios}
 		\label{fig:subfig2}
 	\end{subfigure}
 	% OJO: el caption siempre va antes del label
 	\label{fig:subfigs}
 \end{figure}
 
-Notemos que, a diferencia de lo que marca la intuición, la mejor cantidad de vecinos es 1 en ambos casos. Por otro lado, podemos notar que no es necesaria una gran cantidad de pixeles, sino que solamente con 3 pixeles que sean relevantes podemos tener un modelo con mas del 0.99 de precisión.
-
-\newpage
+Podemos ver claramente que, contrario a lo que uno podria pensar, la performance baja a medida que tenemos mas vecinos, siendo el numero ideal exactamente 1. Notar que en estas pruebas tomamos por un lado los pixeles de mayor varianza que habiamos encontrados antes y, pixeles aleatorios.
+\vspace{0.05cm}
+Veamos tambien, un caso con mas pixeles a ver que ocurre
 
 \begin{figure}[ht!]
 	\begin{subfigure}{0.5\textwidth}
-		\includegraphics[width=0.9\linewidth]{imagenes/1pixelalto.png} 
+		\includegraphics[width=1\linewidth]{imagenes/10pixeles.png} 
 		\caption{Pixeles de alta varianza}
 		\label{fig:subfig1}
 	\end{subfigure}
 	\begin{subfigure}{0.5\textwidth}
-		\includegraphics[width=0.9\linewidth]{Imagenes/1pixelbajo.png}
-		\caption{Pixeles de baja varianza}
+		\includegraphics[width=1\linewidth]{Imagenes/10pixelesRandom.png}
+		\caption{Pixeles aleatorios}
 		\label{fig:subfig2}
 	\end{subfigure}
 	% OJO: el caption siempre va antes del label
 	\label{fig:subfigs}
 \end{figure}
 
+\subsection{Conclusión}
 
-Sin embargo, hay un caso que escapa a la regla. Encontramos que cuando tenemos solo un pixel. Sin importar si este es significativo o no, la performance del modelo tiende a aumentar a medida que el numero de vecinos es mayor. En este caso, a partir de los gráficos, pareciera ser que k = 9 sería un buen número.
+Otra vez, obtenemos el mismo resultado, la performance baja al aumentar la cantidad de vecinos. Por lo tanto, podemos concluir que tomando un modelo que tenga entre 3 y 10 pixeles con k = 1, tendriamos un modelo muy eficiente puesto que utiliza alrededor del 1\% de los pixeles totales mientra que tiene una precision muy cercana a 1.
 
-\vspace{0.05cm}
-
-Cerrando esta sección, creo que podemos concluir que tomando los 3 pixeles de mayor varianza y k = 1, tenemos un excelente clasificador para distinguir entre la letra A y la letra L.
-
+\newpage
 
 \section{Clasificador Multiclase}
 
@@ -210,32 +218,36 @@ el modelo con los datos de train y medirlo contra los datos de validation.
 
 \begin{figure}[h]
   \centering
-  \includegraphics[width=0.8\textwidth]{Imagenes/primer_prueba_arbol.png}
+  \includegraphics[width=0.6\textwidth]{Imagenes/primer_prueba_arbol.png}
   \caption{Prueba para distintas profundidades}
   \label{fig:Tabla 1}
 \end{figure}
-
-\newpage
 
 Por otro lado,para poder comparar y seleccionar el mejor arbol de decision, se empleo validacion cruzada con k-folding utilizando los datos de train, los cuales
 en este caso son la union entre los datos de train y validacion anteriores. Veamos entonces los resultados comparados con el test anterior.
 
 \begin{figure}[ht!]
 	\begin{subfigure}{0.5\textwidth}
-		\includegraphics[width=0.9\linewidth]{Imagenes/KFold_prueba_arbol.png} 
+		\includegraphics[width=1\linewidth]{Imagenes/KFold_prueba_arbol.png} 
 		\caption{KFold}
 		\label{fig:subfig1}
 	\end{subfigure}
 	\begin{subfigure}{0.5\textwidth}
-		\includegraphics[width=0.9\linewidth]{Imagenes/tercer_Grafico_relacion.png}
-		\caption{-}
+		\includegraphics[width=1\linewidth]{Imagenes/tercer_Grafico_relacion.png}
+		\caption{Comparacion entre ambos tests}
 		\label{fig:subfig2}
 	\end{subfigure}
 	% OJO: el caption siempre va antes del label
 	\label{fig:subfigs}
 \end{figure}
 
-A raiz, de los gráficos anteriores, pudimos notar que a partir de la altura 10, el modelo tiende a mantener su precision. Por eso, nos quedaremos con estos valores e iremos testeando que ocurre combinandolos con otros hiperparametros.. Para eso, realizamos un Grid Search tomando en cuenta los profundidades anteriormente nombradas, y los criterios, entropia y gini. A continuación tenemos una tabla con los resultados.
+A raiz, de los gráficos anteriores, pudimos notar que a partir de la altura 10, el modelo tiende a mantener su precision. Por eso, nos quedaremos con estos valores e iremos testeando que ocurre combinandolos con otros hiperparametros. Para eso, realizamos un Grid Search tomando en cuenta los profundidades anteriormente nombradas, y los criterios, entropia y gini.
+
+\newpage
+
+\subsection{Grid Search}
+
+En la imagen a continuación, la cual corresponde al Grid Search, podemos notar, primero que utlizar entropia es un poco mas eficiente que utilizar gini. Y, en segundo lugar, que el rendimiento entre profundidades practicamente no difiere. Por lo tanto, tomaremos aquel de menor profundidad en busca de tener un modelo mas simple. De esta manera, el modelo que escogeremos al final es un arbol de altura 10 con el criterio entropia. \vspace{0.05cm}
 
 \begin{figure}[h]
   \centering
@@ -244,11 +256,6 @@ A raiz, de los gráficos anteriores, pudimos notar que a partir de la altura 10,
   \label{fig:Tabla 1}
 \end{figure}
 
-\subsection{Conclusiones}
-
-Podemos notar, primero que utlizar entropia es un poco mas eficiente que utilizar gini. Y, en segundo lugar, que el rendimiento entre profundidades practicamente no difiere. Por lo tanto, tomaremos aquel de menor profundidad en busca de tener un modelo mas simple. De esta manera, el modelo que escogeremos al final es un arbol de altura 10 con el criterio entropia. \vspace{0.05cm}
-
-\newpage
 
 \subsection{Matriz de Confusion y Test}
 

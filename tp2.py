@@ -1,26 +1,21 @@
 # -*- coding: utf-8 -*-
 """
-Trabajo Practico N°2: clasificación y selección de modelos, utilizando validación cruzada.
+Trabajo Practico 2: clasificación y selección de modelos, utilizando validación cruzada.
 Materia: Laboratorio de Datos - Verano 2024
-
-Contenido: Modelos de clasificacion KNN y Arbol de decision. Generacion de graficos y tablas.
-
 Integrantes: Chapana Puma Joselin , Martinelli Lorenzo, Padilla Ramiro Martin
 """
 
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-import graphviz
 import seaborn as sns
-import six # Para graficar tablas
 from sklearn.model_selection import train_test_split
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.model_selection import GridSearchCV
-from sklearn.tree import DecisionTreeClassifier,export_graphviz
+from sklearn.tree import DecisionTreeClassifier
 from sklearn.model_selection import cross_val_score
 from sklearn.metrics import accuracy_score 
-from sklearn.metrics import ConfusionMatrixDisplay, classification_report
+from sklearn.metrics import ConfusionMatrixDisplay
 from utils import vecinosAleatorios, render_mpl_table
 
 # Guardamos la ruta a la carpeta donde está el csv.
@@ -45,20 +40,20 @@ X = df_sign.drop(['label'], axis=1)
 X = X.values
 
 # Genero una 'Preview' del dataset para ver como son las imagenes.
-fig, axe = plt.subplots(3,3)
+fig, axe = plt.subplots(3,5)
 fig.suptitle('Preview del dataset', size = 14)
-plt.subplots_adjust(hspace= 0.4, wspace = -0.2)
+plt.subplots_adjust(hspace=0.5, wspace=0.6)
 
 label : int = 0
 for i in range(3):
-    for j in range(3):
+    for j in range(5):
         axe[i][j].imshow(X[label].reshape(28,28), cmap='gray')
         axe[i][j].set_title('letra: ' + letras[Y[label]])
         label += 1
 
 # Elimino los ticks de todos los subplot.
 for ax in axe:
-    for i in range(3):
+    for i in range(5):
         ax[i].set_xticks([])
         ax[i].set_yticks([])
         
@@ -494,6 +489,8 @@ for i in profundidad:
     
     print(f"Precisión para árbol con profundidad {i}: {precision}")
 
+sns.set_style('whitegrid')
+
 plt.plot(profundidad, resultados_train, label = 'Train')
 plt.plot(profundidad, resultados_val, label = 'Validation')
 plt.legend()
@@ -504,6 +501,7 @@ plt.xticks(profundidad)
 plt.ylim(0.35,1.05)
 plt.savefig('primer_prueba_arbol.png', dpi = 400)
 plt.show()
+plt.close()
 
 # Notamos que a partir de k = 10, la precision se estabiliza notoriamente.
 # Cuando tenemos modelos con performance similares, nos quedamos siempre con el mas sencillo.
@@ -530,6 +528,8 @@ for i in profundidad:
     
     print(f"Rendimiento para profundidad {i} :  {score}")
 
+sns.set_style('whitegrid')
+
 plt.plot(profundidad, resultados_cross)
 plt.title('Performance del Arbol de decision con K-Fold Cross Validation')
 plt.xlabel('Nivel de profundidad')
@@ -538,10 +538,14 @@ plt.xticks(profundidad)
 plt.ylim(0.35,1.05)
 plt.savefig('KFold_prueba_arbol.png', dpi = 400)
 plt.show()  
+plt.close()
+
 
 # El resultado es similar, a partir de ~10 se es estabiliza.
 
 # Graficamos los resultados con kfold y los de resultado_val.
+sns.set_style('whitegrid')
+
 plt.plot(profundidad, resultados_cross, label = 'K-fold Cross Validation')
 plt.plot(profundidad, resultados_val, label = 'Validation')
 plt.title('Performance del Arbol de decision')
@@ -552,6 +556,7 @@ plt.ylim(0.35,1.04)
 plt.legend()
 plt.savefig('tercer_Grafico_relacion l.png', dpi = 400)
 plt.show()
+plt.close()
 
 # Para buscar el mejor modelo exploramos distintas combinaciones de hiperparametros.
 # Ya vimos antes que alturas eran mas relevantes por eso tomamos solamente un subconjunto.
@@ -560,6 +565,7 @@ hyper_params = {'criterion' : ["gini", "entropy"],
 
 # Realizamos un Grid Search.
 arbol= DecisionTreeClassifier()
+
 # Notemos que, al no aclarar el parametro cv, por default realiza un Stratified KFold con k = 5.
 clf = GridSearchCV(arbol, hyper_params)
 clf.fit(X_train, Y_train)
@@ -583,10 +589,6 @@ resultados = resultados.round(4)
 # Exporto la tabla.
 render_mpl_table(resultados, header_columns=0, col_width=6.2)
 
-# Recall/Precision
-vocalesB = np.array(['A','E','I','O','U'])
-print(classification_report(Y_test, Y_pred, target_names=vocalesB)) # recall/precision
-
 #%% Genero el mejor arbol a nuestro criterio.
 arbol = DecisionTreeClassifier(criterion='entropy', max_depth= 10) 
 arbol.fit(X_train, Y_train)
@@ -595,15 +597,8 @@ arbol.fit(X_train, Y_train)
 Y_pred = arbol.predict(X_test)
 arbol.score(X_test, Y_test)
 
-# Grafico el modelo
-dot_data = export_graphviz(arbol, out_file=None, 
-                           feature_names= X_train.columns,
-                           class_names= vocalesB,
-                           filled=True, rounded=True,
-                           special_characters=True)
-
-graph = graphviz.Source(dot_data) 
-graph.render("Que_vocal_es", format= "png")
+# Almaceno las vocales en un Array.
+vocalesB = np.array(['A','E','I','O','U'])
 
 # Armamos matriz de confusion para el mejor modelo
 ConfusionMatrixDisplay.from_estimator(arbol, X_test, Y_test,
@@ -616,6 +611,10 @@ plt.title('Matriz de confusión sobre datos de Test')
 plt.gcf().set_size_inches(7,6)
 plt.savefig('matriz_confusion_arbol.png', dpi = 400)
 plt.show()
+plt.close()
+
+# Comentario: Por algun motivo si utilizo en las imagenes anteriores sns.set_style
+# se le superpone una grilla a la matriz. En el informe esta bien graficada.
 
 # Eliminamos las variables que ya no usamos
 del arbol, clf, hyper_params
