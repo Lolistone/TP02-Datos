@@ -2,24 +2,18 @@
 
 ## Bibliotecas necesarias:
 
-- numpy
-- pandas
-- matplotlib.pyplot
-- scikit-learn
-- six
-- graphviz
+- numpy 1.26.4
+- pandas 1.5.3
+- matplotlib.pyplot 3.8.3
+- scikit-learn 1.4.1.post1
+- six 1.16.0
+- seaborn 0.13.2
 
 De la biblioteca scikit-learn será necesario importar los siguientes módulos con dichas funciones:
 
 - from sklearn.model_selection: train_test_split, GridSearchCV, cross_val_score
 - from sklearn.neighbors: KNeighborsClassifier
-- from sklearn.tree: DecisionTreeClassifier,export_graphviz
-- from sklearn.metrics: accuracy_score, ConfusionMatrixDisplay, classification_report
+- from sklearn.tree: DecisionTreeClassifier
+- from sklearn.metrics: accuracy_score, ConfusionMatrixDisplay
 
-## Instrucciones del código
-
-El código esta separado en distintos bloques, cada uno debe ser corrido individualmente para generar gráficos, reportes e información de cada fragmento.
-
-Los dos ultimos bloques corresponden respectivamente a: 
-- Función necesaria para obtener el gráfico de la tabla 
-- Generación del mejor modelo del arbol de decision junto a la matriz de confusión. 
+## Obs: En el archivo utils.py encontramos algunas funciones auxiliares.
