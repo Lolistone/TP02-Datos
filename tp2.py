@@ -2,6 +2,7 @@
 """
 Trabajo Practico N°2: clasificación y selección de modelos, utilizando validación cruzada.
 Materia: Laboratorio de Datos - Verano 2024
+
 Contenido: Modelos de clasificacion KNN y Arbol de decision. Generacion de graficos y tablas.
 
 Integrantes: Chapana Puma Joselin , Martinelli Lorenzo, Padilla Ramiro Martin
@@ -11,6 +12,7 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import graphviz
+import seaborn as sns
 import six # Para graficar tablas
 from sklearn.model_selection import train_test_split
 from sklearn.neighbors import KNeighborsClassifier
@@ -18,7 +20,8 @@ from sklearn.model_selection import GridSearchCV
 from sklearn.tree import DecisionTreeClassifier,export_graphviz
 from sklearn.model_selection import cross_val_score
 from sklearn.metrics import accuracy_score 
-from sklearn.metrics import ConfusionMatrixDisplay, classification_report 
+from sklearn.metrics import ConfusionMatrixDisplay, classification_report
+from utils import vecinosAleatorios, render_mpl_table
 
 # Guardamos la ruta a la carpeta donde está el csv.
 carpeta = '~/Dropbox/UBA/2024/LaboDeDatos/TP02/'
@@ -283,12 +286,7 @@ plt.close(fig)
 # Graficamos A - L.
 fig, ax = plt.subplots()
 fig.suptitle('Varianza entre A y L', size = 14, x= 0.5, y = 0.96)
-
 ax.imshow(restaAL.reshape(28,28), cmap = 'gray')
-
-plt.show()
-plt.close(fig)
-# Con esta imagen podemos ver, claramente donde están los pixeles mas significativos.
 
 # Borro las variables que ya no necesito.
 del Xa, Xl, restaAL
@@ -300,51 +298,75 @@ del valor
 Y = df_al['label']
 X = df_al.drop(['label'], axis=1)
 
-# Separamos en train y test. Utilizo shuffle para garantizar alternancia de clases.
-X_train, X_test, y_train, y_test = train_test_split(X, Y, test_size = 0.2, shuffle = True, random_state=0)
+# Probemos distintas cantidades de atributos al azar para determinar su rendimiento.
+cant_atributos = range(1,15)
+repeticiones = 10
 
-# Armamos el modelo
-clf = KNeighborsClassifier(n_neighbors=3)
+resultados_test  = np.zeros((repeticiones, len(cant_atributos)))
+resultados_train = np.zeros((repeticiones, len(cant_atributos)))
 
-# Elijo que pixeles usar. Obviamente, teniendo encuenta la lista 'maxima_varianza'
-pixeles = [[300, 273, 245], [301, 298, 272], [270, 327, 328]]
-resultados = []
-for i in range(len(pixeles)):
-    X_train_1 = X_train.iloc[:, pixeles[i]]
-    X_test_1 = X_test.iloc[:,pixeles[i]]
-
-    # Entrenamos el modelo.
-    clf.fit(X_train_1, y_train)
+# Cantidad de veces que elijo al azar pixeles. 
+for i in range(repeticiones):
     
-    # Evaluamos la exactitud.
-    print("Test set accuracy: {:.2f}".format(clf.score(X_test_1, y_test)))
-    
-    # Guardo los resultados
-    resultados += [round(clf.score(X_test_1, y_test), 2)]
+    # Cantidad de atributos que tomo en cada iteración.
+    for j in cant_atributos:
+        
+        #Separamos en train y test
+        X_train, X_test, y_train, y_test = train_test_split(X.sample(j, axis = 1), Y, test_size = 0.3, shuffle=True)
+        
+        # Declaramos el tipo modelo
+        clf = KNeighborsClassifier(n_neighbors = 3)
+        
+        # Entrenamos el modelo
+        clf.fit(X_train, y_train)
+        
+        # Evaluamos el modelo con datos de train y luego de test
+        resultados_train[i, j-1] = clf.score(X_train, y_train)
+        resultados_test[i, j-1]  = clf.score(X_test , y_test)
+        
+resultads_train = np.mean(resultados_train, axis = 0) 
+resultads_test  = np.mean(resultados_test , axis = 0)
 
-# Utilizando los pixeles de mayor varianza, obtenemos resultados realmente buenos.
+# Graficamos los resultados anteriores.
+sns.set_style('whitegrid')
 
-# Ahora, probemos, para distintas cantidades de atributos, distintos valores de k.
+plt.plot(cant_atributos, resultads_train, label = 'Train')
+plt.plot(cant_atributos, resultads_test, label = 'Test')
+plt.legend()
+plt.title('Performance en función de la cantidad de atributos')
+plt.xlabel('Cantidad de atributos')
+plt.ylabel('Precisión')
+plt.xticks(cant_atributos)
+plt.ylim(0.60,1.05)
+plt.savefig('pixelesvsacc.png', dpi = 400)
+plt.show()
 
-# Rango de valores por los que se va a mover k
+# Ahora que sabemos como influye la cantidad de atributos en la precision, veamos la cantidad de vecinos.
+
+# Separamos en Train y Test.
+X_train, X_test, y_train, y_test = train_test_split(X, Y, test_size = 0.3, shuffle=True)
+
+# Veamos el caso de 3 pixeles, tomando primero aquellos de mayor varianza.
 valores_k = range(1, 10)
+pixeles = [300, 273, 245]
 
-resultados_test  = np.zeros(len(valores_k))
 resultados_train = np.zeros(len(valores_k))
+resultados_test = np.zeros(len(valores_k))
 
-X_train_1 = X_train.iloc[:, pixeles[0]]
-X_test_1 = X_test.iloc[:,pixeles[0]]
-
+# K representa #Vecinos
 for k in valores_k:
+    
     # Declaramos el tipo de modelo
     clf = KNeighborsClassifier(n_neighbors = k)
+    
     # Entrenamos el modelo (con datos de train)
-    clf.fit(X_train_1, y_train) 
+    clf.fit(X_train.iloc[:, pixeles], y_train) 
+    
     # Evaluamos el modelo con datos de train y luego de test
-    resultados_train[k-1] = clf.score(X_train_1, y_train)
-    resultados_test[k-1]  = clf.score(X_test_1 , y_test )
+    resultados_train[k-1] = clf.score(X_train.iloc[:, pixeles], y_train)
+    resultados_test[k-1]  = clf.score(X_test.iloc[:, pixeles] , y_test )
 
-# Performance con tres pixeles.
+# Performance con tres pixeles (Muy significativos).
 plt.plot(valores_k, resultados_train, label = 'Train')
 plt.plot(valores_k, resultados_test, label = 'Test')
 plt.legend()
@@ -356,105 +378,78 @@ plt.ylim(0.95,1.00)
 plt.savefig('3pixeles.png', dpi = 400)
 plt.show()
 
-# Probemos ahora con conjuntos mas grandes de pixeles. Por ejemplo, 50 pixeles.
-valores_k = range(1, 15)
+# 10 pixeles, tomando primero aquellos de mayor varianza.
+valores_k = range(1, 10)
+pixeles = [300, 273, 245, 301, 298, 272, 270, 326, 329, 298]
 
-resultados_test  = np.zeros(len(valores_k))
 resultados_train = np.zeros(len(valores_k))
+resultados_test = np.zeros(len(valores_k))
 
-# Intente agarrar pixeles no tan cercanos a los de mayor varianza.
-X_train_1 = X_train.iloc[:,600:650]
-X_test_1 = X_test.iloc[:,600:650]
-
+# K representa #Vecinos
 for k in valores_k:
+    
     # Declaramos el tipo de modelo
     clf = KNeighborsClassifier(n_neighbors = k)
+    
     # Entrenamos el modelo (con datos de train)
-    clf.fit(X_train_1, y_train) 
+    clf.fit(X_train.iloc[:, pixeles], y_train) 
+    
     # Evaluamos el modelo con datos de train y luego de test
-    resultados_train[k-1] = clf.score(X_train_1, y_train)
-    resultados_test[k-1]  = clf.score(X_test_1 , y_test )
+    resultados_train[k-1] = clf.score(X_train.iloc[:, pixeles], y_train)
+    resultados_test[k-1]  = clf.score(X_test.iloc[:, pixeles] , y_test )
 
-# Performance con 50 pixeles.
+# Performance con tres pixeles (Muy significativos).
 plt.plot(valores_k, resultados_train, label = 'Train')
 plt.plot(valores_k, resultados_test, label = 'Test')
 plt.legend()
-plt.title('Performance del modelo de knn (50 pixeles)')
+plt.title('Performance del modelo de knn (10 pixeles)')
 plt.xlabel('Cantidad de vecinos')
 plt.ylabel('Precisión')
 plt.xticks(valores_k)
-plt.ylim(0.95,1.00)
-plt.savefig('50pixeles.png', dpi = 400)
+plt.ylim(0.98,1.005)
+plt.savefig('10pixeles.png', dpi = 400)
 plt.show()
 
-# Parece ser que el mejor k, sin importar la cantidad de pixeles es 1. Probemos con 1 pixel.
-valores_k = range(1, 15)
+# Probemos, con 3 atributos aleatorios.
+cant_vecinos = range(1,10)
+k = len(cant_vecinos) + 1
 
-resultados_test  = np.zeros(len(valores_k))
-resultados_train = np.zeros(len(valores_k))
+resultados_train, resultados_test = vecinosAleatorios(k, 20, 3, X, Y)
 
-X_train_1 = X_train.iloc[:,300:301]
-X_test_1 = X_test.iloc[:,300:301]
+# Graficamos los resultados anteriores.
+sns.set_style('whitegrid')
 
-for k in valores_k:
-    # Declaramos el tipo de modelo
-    clf = KNeighborsClassifier(n_neighbors = k)
-    # Entrenamos el modelo (con datos de train)
-    clf.fit(X_train_1, y_train) 
-    # Evaluamos el modelo con datos de train y luego de test
-    resultados_train[k-1] = clf.score(X_train_1, y_train)
-    resultados_test[k-1]  = clf.score(X_test_1 , y_test )
-
-# Performance con 1 pixel.
-plt.plot(valores_k, resultados_train, label = 'Train')
-plt.plot(valores_k, resultados_test, label = 'Test')
+plt.plot(cant_vecinos, resultados_train, label = 'Train')
+plt.plot(cant_vecinos, resultados_test, label = 'Test')
 plt.legend()
-plt.title('Performance del modelo de knn (1 pixel)')
-plt.xlabel('Cantidad de vecinos')
+plt.title('Performance del modelo Knn (3 pixeles aleatorios)')
+plt.xlabel('Cantidad de atributos')
 plt.ylabel('Precisión')
-plt.xticks(valores_k)
-plt.ylim(0.65,1.00)
-plt.savefig('1pixelalto.png', dpi = 400)
+plt.xticks(cant_vecinos)
+plt.ylim(0.60,1.05)
+plt.savefig('3pixelesRandom.png', dpi = 400)
 plt.show()
 
-# Probemos una zona menos signficativa
-valores_k = range(1, 15)
+# Para cerrar, podemos probar con 10 pixeles.
+resultados_train, resultados_test = vecinosAleatorios(k, 20, 10, X, Y)
 
-resultados_test  = np.zeros(len(valores_k))
-resultados_train = np.zeros(len(valores_k))
-
-# Intente agarrar pixeles no tan cercanos a los de mayor varianza.
-X_train_1 = X_train.iloc[:,400:401]
-X_test_1 = X_test.iloc[:,400:401]
-
-for k in valores_k:
-    # Declaramos el tipo de modelo
-    clf = KNeighborsClassifier(n_neighbors = k)
-    # Entrenamos el modelo (con datos de train)
-    clf.fit(X_train_1, y_train) 
-    # Evaluamos el modelo con datos de train y luego de test
-    resultados_train[k-1] = clf.score(X_train_1, y_train)
-    resultados_test[k-1]  = clf.score(X_test_1 , y_test )
-
-# Performance con 1 pixel.
-plt.plot(valores_k, resultados_train, label = 'Train')
-plt.plot(valores_k, resultados_test, label = 'Test')
+plt.plot(cant_vecinos, resultados_train, label = 'Train')
+plt.plot(cant_vecinos, resultados_test, label = 'Test')
 plt.legend()
-plt.title('Performance del modelo de knn (1 pixel)')
-plt.xlabel('Cantidad de vecinos')
+plt.title('Performance del modelo Knn (10 pixeles aleatorios)')
+plt.xlabel('Cantidad de atributos')
 plt.ylabel('Precisión')
-plt.xticks(valores_k)
-plt.ylim(0.45,0.70)
-plt.savefig('1pixelbajo.png', dpi = 400)
+plt.xticks(cant_vecinos)
+plt.ylim(0.95,1.01)
+plt.savefig('10pixelesRandom.png', dpi = 400)
 plt.show()
 
-# Si bien la precision bajó notablemente, el resultado es el mismo, con un k = 9 el modelo mejora notoriamente.
+# Elimino variables sin usar.
 del clf
-del X, X_test, X_test_1, X_train, X_train_1, Y, y_test
 del df_al
 del i, k
 del pixeles, maxima_varianza
-del resultados, resultados_test, resultados_train
+del resultados_test, resultados_train
 del valores_k, y_train
 
 #%% Clasificación multiclase
@@ -585,44 +580,30 @@ resultados.rename(columns = {'param_criterion' : 'Criterio',
 
 resultados = resultados.round(4)
 
-#%% Funcion auxiliar para tablas
-def render_mpl_table(data, col_width=3.0, row_height=0.625, font_size=14,
-                     header_color='#40466e', row_colors=['#f1f1f2', 'w'], edge_color='w',
-                     bbox=[0, 0, 1, 1], header_columns=0,
-                     ax=None, **kwargs):
-    if ax is None:
-        size = (np.array(data.shape[::-1]) + np.array([0, 1])) * np.array([col_width, row_height])
-        fig, ax = plt.subplots(figsize=size)
-        ax.axis('off')
-
-    mpl_table = ax.table(cellText=data.values, bbox=bbox, colLabels=data.columns, **kwargs)
-
-    mpl_table.auto_set_font_size(False)
-    mpl_table.set_fontsize(font_size)
-
-    for k, cell in six.iteritems(mpl_table._cells):
-        cell.set_edgecolor(edge_color)
-        if k[0] == 0 or k[1] < header_columns:
-            cell.set_text_props(weight='bold', color='w')
-            cell.set_facecolor(header_color)
-        else:
-            cell.set_facecolor(row_colors[k[0]%len(row_colors) ])
-    return ax
-
 # Exporto la tabla.
 render_mpl_table(resultados, header_columns=0, col_width=6.2)
 
-#%% Recall/Precision
+# Recall/Precision
 vocalesB = np.array(['A','E','I','O','U'])
 print(classification_report(Y_test, Y_pred, target_names=vocalesB)) # recall/precision
 
-# Genero el mejor arbol a nuestro criterio.
+#%% Genero el mejor arbol a nuestro criterio.
 arbol = DecisionTreeClassifier(criterion='entropy', max_depth= 10) 
 arbol.fit(X_train, Y_train)
 
 # Una vez, ya estamos seguros de que tenemos el mejor modelo, hacemos una prueba con los datos de test.
 Y_pred = arbol.predict(X_test)
 arbol.score(X_test, Y_test)
+
+# Grafico el modelo
+dot_data = export_graphviz(arbol, out_file=None, 
+                           feature_names= X_train.columns,
+                           class_names= vocalesB,
+                           filled=True, rounded=True,
+                           special_characters=True)
+
+graph = graphviz.Source(dot_data) 
+graph.render("Que_vocal_es", format= "png")
 
 # Armamos matriz de confusion para el mejor modelo
 ConfusionMatrixDisplay.from_estimator(arbol, X_test, Y_test,
@@ -635,16 +616,6 @@ plt.title('Matriz de confusión sobre datos de Test')
 plt.gcf().set_size_inches(7,6)
 plt.savefig('matriz_confusion_arbol.png', dpi = 400)
 plt.show()
-
-# Grafico el modelo
-dot_data = export_graphviz(arbol, out_file=None, 
-                           feature_names= X_train.columns,
-                           class_names= vocalesB,
-                           filled=True, rounded=True,
-                           special_characters=True)
-
-graph = graphviz.Source(dot_data) 
-graph.render("Que_vocal_es", format= "png")
 
 # Eliminamos las variables que ya no usamos
 del arbol, clf, hyper_params
