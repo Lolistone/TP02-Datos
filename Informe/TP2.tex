@@ -119,9 +119,8 @@ En esta sección, trabajeremos con un subconjunto del dataset original, donde so
 diferencie estas letras con la menor cantidad de pixeles posibles. Comencemos entonces viendo cuantas muestras tenemos. 
 
 \begin{figure}[h]
-  \centering
   \includegraphics[width=0.5\textwidth]{Imagenes/cantidad\_letras\_A\_L.png}
-  \caption{Letra L - A}
+  \caption{Distribución de Letras}
   \label{fig:Tabla 6}
 \end{figure}
 
@@ -158,6 +157,8 @@ Una vez, que conocemos bastante acerca de nuestro dataset, estamos en condicione
   \caption{Pixeles vs Accuracy}
   \label{fig:Tabla 1}
 \end{figure}
+
+Una observación, para tener un gráfico mas confiable, lo que hicimos fue realizar la prueba de precision una cierta cantidad de veces, tomando en cada iteracion pixeles al azar, para luego tomar su promedio, de esta manera garantizamos cierta aleatoreidad.
 
 \newpage
 
@@ -197,6 +198,8 @@ Veamos tambien, un caso con mas pixeles a ver que ocurre
 	% OJO: el caption siempre va antes del label
 	\label{fig:subfigs}
 \end{figure}
+
+Al igual que cuando testeamos la performance en función de la cantidad de atributos, cuando hicimos la prueba con 3 y 10 pixeles aleatorios, la repetimos una cierta cantidad de veces y obtuvimos su promedio, con el cual realizamos los gráficos anteriores.
 
 \subsection{Conclusión}
 
