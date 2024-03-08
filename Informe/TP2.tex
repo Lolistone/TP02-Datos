@@ -159,7 +159,7 @@ Una vez, que conocemos bastante acerca de nuestro dataset, estamos en condicione
   \label{fig:Tabla 1}
 \end{figure}
 
-Una observación, para tener un gráfico mas confiable, lo que hicimos fue realizar la prueba de precision una cierta cantidad de veces, tomando en cada iteracion pixeles al azar, para luego tomar su promedio, de esta manera garantizamos cierta aleatoreidad.
+Una observación, para tener un gráfico mas confiable, lo que hicimos fue realizar la prueba de precisión una cierta cantidad de veces, tomando en cada iteracion pixeles al azar, para luego tomar su promedio, de esta manera garantizamos cierta aleatoreidad.
 
 \newpage
 
@@ -202,10 +202,6 @@ Veamos tambien, un caso con mas pixeles a ver que ocurre
 
 Al igual que cuando testeamos la performance en función de la cantidad de atributos, cuando hicimos la prueba con 3 y 10 pixeles aleatorios, la repetimos una cierta cantidad de veces y obtuvimos su promedio, con el cual realizamos los gráficos anteriores.
 
-\subsection{Conclusión}
-
-Otra vez, obtenemos el mismo resultado, la performance baja al aumentar la cantidad de vecinos. Por lo tanto, podemos concluir que tomando un modelo que tenga entre 3 y 10 pixeles con k = 1, tendriamos un modelo muy eficiente puesto que utiliza alrededor del 1\% de los pixeles totales mientra que tiene una precision muy cercana a 1.
-
 \newpage
 
 \section{Clasificador Multiclase}
@@ -214,7 +210,7 @@ Otra vez, obtenemos el mismo resultado, la performance baja al aumentar la canti
 
 \subsection{¿A cuál de las vocales corresponde la seña en la imagen?}
 
-En esta sección, se intentará encontrar un modelo de arbol de decisión que prediga las vocales. Para esto, armaremos un dataset a partir del original el cual contenga unicamente estas. \vspace{0.05cm}
+En esta sección, se intentará encontrar un modelo de árbol de decisión que prediga las vocales. Para esto, armaremos un dataset a partir del original el cual contenga unicamente estas. \vspace{0.05cm}
 
 A fin de encontrar el mejor modelo, realizamos distintas pruebas modificando los paramentros del modelo. En primer lugar, lo que hicimos fue testear alturas
 entre 1 y 14. Para esto, utilizamos dos métodos, por un lado dividimos el el dataset original en train, validation y test, para luego entrenar
@@ -227,7 +223,7 @@ el modelo con los datos de train y medirlo contra los datos de validation.
   \label{fig:Tabla 1}
 \end{figure}
 
-Por otro lado,para poder comparar y seleccionar el mejor arbol de decision, se empleo validacion cruzada con k-folding utilizando los datos de train, los cuales
+Por otro lado,para poder comparar y seleccionar el mejor árbol de decisión, se empleo validacion cruzada con k-folding utilizando los datos de train, los cuales
 en este caso son la union entre los datos de train y validacion anteriores. Veamos entonces los resultados comparados con el test anterior.
 
 \begin{figure}[ht!]
@@ -245,13 +241,13 @@ en este caso son la union entre los datos de train y validacion anteriores. Veam
 	\label{fig:subfigs}
 \end{figure}
 
-A raiz, de los gráficos anteriores, pudimos notar que a partir de la altura 10, el modelo tiende a mantener su precision. Por eso, nos quedaremos con estos valores e iremos testeando que ocurre combinandolos con otros hiperparametros. Para eso, realizamos un Grid Search tomando en cuenta los profundidades anteriormente nombradas, y los criterios, entropia y gini.
+A raiz, de los gráficos anteriores, pudimos notar que a partir de la altura 10, el modelo tiende a mantener su precisión. Por eso, nos quedaremos con estos valores e iremos testeando que ocurre combinandolos con otros hiperparametros. Para eso, realizamos un Grid Search tomando en cuenta los profundidades anteriormente nombradas, y los criterios, entropia y gini.
 
 \newpage
 
 \subsection{Grid Search}
 
-En la imagen a continuación, la cual corresponde al Grid Search, podemos notar, primero que utlizar entropia es un poco mas eficiente que utilizar gini. Y, en segundo lugar, que el rendimiento entre profundidades practicamente no difiere. Por lo tanto, tomaremos aquel de menor profundidad en busca de tener un modelo mas simple. De esta manera, el modelo que escogeremos al final es un arbol de altura 10 con el criterio entropia. \vspace{0.05cm}
+En la imagen a continuación, la cual corresponde al Grid Search, podemos notar, primero que utlizar entropia es un poco mas eficiente que utilizar gini. Y, en segundo lugar, que el rendimiento entre profundidades practicamente no difiere. Por lo tanto, tomaremos aquel de menor profundidad en busca de tener un modelo mas simple. De esta manera, el modelo que escogeremos al final es un árbol de altura 10 con el criterio entropia. \vspace{0.05cm}
 
 \begin{figure}[h]
   \centering
@@ -261,7 +257,19 @@ En la imagen a continuación, la cual corresponde al Grid Search, podemos notar,
 \end{figure}
 
 
-\subsection{Matriz de Confusion y Test}
+\newpages
+
+\section{Conclusión}
+
+\subsection{Modelo de Clasificación Binaria}
+
+Pudimos destacar la importancia de comenzar con un analisis exploratorio de las letras L y A, lo que nos permitió notar y diferenciar aquellos pixeles que presentan mayor varianza entre las dos letras, para luego mejorar la performance utilizando estos atributos. Una vez hecho esto, tambien observamos que la perfomance baja al aumentar la cantidad de vecinos. Por lo tanto, podemos concluir que tomando un modelo que tenga entre 3 y 10 pixeles con alta varianza y con k = 1, tendriamos un modelo eficiente con una perfomance entre $0.99 y 1.00$
+
+\subsection{Modelo de Clasificación Multiclase}
+
+Utilizando el metodo de validacion cruzada con K-Folding nos premitió obtener una estimación de performance del árbol de deicision más realista. Decimos que fue mas realista debido a la forma que tiene el metodo de dividir nuestro conjunto de entrenamiento, logrando que cada parte del conjunto de datos se utilice como datos de prueba (una vez) sin pasar por la fase de entrenamiento. Logrando asi concluir que a partir de la altura 10, el modelo mantiene una precisión mayor a 0.9.
+
+Para obtener los mejores hiperparámetros de nuestro modelo realizamos Grid Search para obtener aquellos que mejoren su rendimiento. Tomamos en consideracion los hiperparámetros: profundidad máxima del árbol y el criterio de división. Concluyendo que el modelo final es un árbol de altura 10 con el criterio entropia, lo cual demostramos poniendo a prueba el modelo frente a los datos de test que separamos al principio de todo el proceso. 
 
 Para poder visualizar mejor donde acierta y donde no nuestro modelo, se recurrió a la matriz de confusión. Esta matriz es una herramienta que muestra de manera detallada cómo el modelo clasifica las muestras en cada una de las clases. Donde cada fila de la matriz representa la clase real, mientras que cada columna representa la clase predicha por el modelo.
 
@@ -274,6 +282,6 @@ Para poder visualizar mejor donde acierta y donde no nuestro modelo, se recurri�
 
 Podemos notar, que nuestro modelo tiende a confundir las letras I y A por un lado, y las letras U e I. Sin embargo, tambien vemos que tiene un excelente desempeño mostrando una precisión del 0.9678.
 
-Cabe aclarar, que tanto la matriz como la precision fueron calculadas a partir de los datos de test, los cuales, habiamos reservado hasta este momento.
+Cabe aclarar, que tanto la matriz como la precisión fueron calculadas a partir de los datos de test, los cuales, habiamos reservado hasta este momento.
 
 \end{document}
