@@ -161,6 +161,10 @@ Una vez, que conocemos bastante acerca de nuestro dataset, estamos en condicione
 
 Una observación, para tener un gráfico mas confiable, lo que hicimos fue realizar la prueba de precisión una cierta cantidad de veces, tomando en cada iteracion pixeles al azar, para luego tomar su promedio, de esta manera garantizamos cierta aleatoreidad.
 
+\subsection{Conclusiones Clasificación Binaria}
+
+Pudimos destacar la importancia de comenzar con un analisis exploratorio de los datos correspondientes a las letras L y A, lo que nos permitió notar y diferenciar aquellos pixeles que presentan mayor varianza entre las dos letras, para luego mejorar la performance utilizando estos atributos. Una vez hecho esto, tambien observamos que la perfomance baja al aumentar la cantidad de vecinos. Por lo tanto, podemos concluir que tomando un modelo que tenga entre 3 y 10 pixeles con alta varianza y con k = 1, tendriamos un modelo eficiente con una perfomance aproximada de $0.99$. 
+
 \newpage
 
 Como se puede apreciar en la imagen anterior, la precisión aumenta de manera notable a partir de los 3 pixeles para luego estabilizarse alrededor de los 7.
@@ -256,20 +260,13 @@ En la imagen a continuación, la cual corresponde al Grid Search, podemos notar,
   \label{fig:Tabla 1}
 \end{figure}
 
+\subsection{Conclusión}
 
-\newpages
+Para encontrar el mejor modelos, comenzamos testeando con el metodo de Kfold Cross Validation diferentes alturas, donde notamos que a partir de una altura 10 casi no variaba la precision de nuestro modelo. Luego, con esta información realizamos un Grid Search que incluia alturas entre 10 y 14 además de los criterios entropy y gini. A partir de este pudimos conlcuir que el modelo final es un árbol de altura 10 con el criterio entropia, el cual testeamos poniendo a prueba el modelo frente a los datos de test que separamos al principio de todo el proceso. En la página a continuación mostramos la matriz de confusión y los resultados finales.
 
-\section{Conclusión}
+\newpage
 
-\subsection{Modelo de Clasificación Binaria}
-
-Pudimos destacar la importancia de comenzar con un analisis exploratorio de las letras L y A, lo que nos permitió notar y diferenciar aquellos pixeles que presentan mayor varianza entre las dos letras, para luego mejorar la performance utilizando estos atributos. Una vez hecho esto, tambien observamos que la perfomance baja al aumentar la cantidad de vecinos. Por lo tanto, podemos concluir que tomando un modelo que tenga entre 3 y 10 pixeles con alta varianza y con k = 1, tendriamos un modelo eficiente con una perfomance entre $0.99 y 1.00$
-
-\subsection{Modelo de Clasificación Multiclase}
-
-Utilizando el metodo de validacion cruzada con K-Folding nos premitió obtener una estimación de performance del árbol de deicision más realista. Decimos que fue mas realista debido a la forma que tiene el metodo de dividir nuestro conjunto de entrenamiento, logrando que cada parte del conjunto de datos se utilice como datos de prueba (una vez) sin pasar por la fase de entrenamiento. Logrando asi concluir que a partir de la altura 10, el modelo mantiene una precisión mayor a 0.9.
-
-Para obtener los mejores hiperparámetros de nuestro modelo realizamos Grid Search para obtener aquellos que mejoren su rendimiento. Tomamos en consideracion los hiperparámetros: profundidad máxima del árbol y el criterio de división. Concluyendo que el modelo final es un árbol de altura 10 con el criterio entropia, lo cual demostramos poniendo a prueba el modelo frente a los datos de test que separamos al principio de todo el proceso. 
+\subsection{Matris de Confusión y Test}
 
 Para poder visualizar mejor donde acierta y donde no nuestro modelo, se recurrió a la matriz de confusión. Esta matriz es una herramienta que muestra de manera detallada cómo el modelo clasifica las muestras en cada una de las clases. Donde cada fila de la matriz representa la clase real, mientras que cada columna representa la clase predicha por el modelo.
 
