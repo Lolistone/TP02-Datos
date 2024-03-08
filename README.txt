@@ -23,5 +23,8 @@ De la biblioteca scikit-learn será necesario importar los siguientes módulos c
 ## Como correr el código: 
 
 - Primero importamos las librerias, carpeta y datafrme. 
+
+## Obs: Luego de importar las librerias, a la variable carpeta debera asignarle la ruta a donde este su csv.
+
 - Luego, podemos ejecutar cada sección del codigo, dividida en Analisis Explotatorio, Clasificación binaria y Clasificacion multiclase
 - por separado, preferentemente, en el orden antes mencionado. 
