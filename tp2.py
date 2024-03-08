@@ -522,7 +522,6 @@ for i in profundidad:
     arbol=DecisionTreeClassifier(max_depth = i)
     arbol.fit(X_train,Y_train)
     
-    # cross_val_score(arbol,X_train,Y_train, cv=5) La comente porque no entendia para q esta.
     score = cross_val_score(arbol, X_train, Y_train, cv=5).mean() 
     resultados_cross[i-1]  = score
     
