@@ -8,7 +8,7 @@ Integrantes: Chapana Puma Joselin , Martinelli Lorenzo, Padilla Ramiro Martin
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-import seaborn as sns
+import seaborn as sns # Figura una advertencia, pues las lineas donde fue usada estan comentadas.
 from sklearn.model_selection import train_test_split
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.model_selection import GridSearchCV
@@ -213,7 +213,7 @@ del i, j
 del Xc
 del label, ax, axe, fig
 
-#%% Construccion de modelo.
+#%% Clasificación Binaria.
 
 # Armo un nuevo dataframe que contiene unicamente a la A y la L
 df_al = df_sign.loc[df_sign['label'].isin([0, 11])]
@@ -282,6 +282,9 @@ plt.close(fig)
 fig, ax = plt.subplots()
 fig.suptitle('Varianza entre A y L', size = 14, x= 0.5, y = 0.96)
 ax.imshow(restaAL.reshape(28,28), cmap = 'gray')
+plt.savefig('varianza.png', dpi = 400)    
+plt.show()
+plt.close(fig)
 
 # Borro las variables que ya no necesito.
 del Xa, Xl, restaAL
@@ -295,7 +298,7 @@ X = df_al.drop(['label'], axis=1)
 
 # Probemos distintas cantidades de atributos al azar para determinar su rendimiento.
 cant_atributos = range(1,15)
-repeticiones = 10
+repeticiones = 20
 
 resultados_test  = np.zeros((repeticiones, len(cant_atributos)))
 resultados_train = np.zeros((repeticiones, len(cant_atributos)))
@@ -323,7 +326,7 @@ resultads_train = np.mean(resultados_train, axis = 0)
 resultads_test  = np.mean(resultados_test , axis = 0)
 
 # Graficamos los resultados anteriores.
-sns.set_style('whitegrid')
+#sns.set_style('whitegrid')
 
 plt.plot(cant_atributos, resultads_train, label = 'Train')
 plt.plot(cant_atributos, resultads_test, label = 'Test')
@@ -339,7 +342,7 @@ plt.show()
 # Ahora que sabemos como influye la cantidad de atributos en la precision, veamos la cantidad de vecinos.
 
 # Separamos en Train y Test.
-X_train, X_test, y_train, y_test = train_test_split(X, Y, test_size = 0.3, shuffle=True)
+X_train, X_test, y_train, y_test = train_test_split(X, Y, test_size = 0.3, shuffle=True, random_state=13)
 
 # Veamos el caso de 3 pixeles, tomando primero aquellos de mayor varianza.
 valores_k = range(1, 10)
@@ -412,7 +415,7 @@ k = len(cant_vecinos) + 1
 resultados_train, resultados_test = vecinosAleatorios(k, 20, 3, X, Y)
 
 # Graficamos los resultados anteriores.
-sns.set_style('whitegrid')
+#sns.set_style('whitegrid')
 
 plt.plot(cant_vecinos, resultados_train, label = 'Train')
 plt.plot(cant_vecinos, resultados_test, label = 'Test')
@@ -489,7 +492,7 @@ for i in profundidad:
     
     print(f"Precisión para árbol con profundidad {i}: {precision}")
 
-sns.set_style('whitegrid')
+#sns.set_style('whitegrid')
 
 plt.plot(profundidad, resultados_train, label = 'Train')
 plt.plot(profundidad, resultados_val, label = 'Validation')
@@ -528,7 +531,7 @@ for i in profundidad:
     
     print(f"Rendimiento para profundidad {i} :  {score}")
 
-sns.set_style('whitegrid')
+#sns.set_style('whitegrid')
 
 plt.plot(profundidad, resultados_cross)
 plt.title('Performance del Arbol de decision con K-Fold Cross Validation')
@@ -544,7 +547,7 @@ plt.close()
 # El resultado es similar, a partir de ~10 se es estabiliza.
 
 # Graficamos los resultados con kfold y los de resultado_val.
-sns.set_style('whitegrid')
+#sns.set_style('whitegrid')
 
 plt.plot(profundidad, resultados_cross, label = 'K-fold Cross Validation')
 plt.plot(profundidad, resultados_val, label = 'Validation')
@@ -589,7 +592,7 @@ resultados = resultados.round(4)
 # Exporto la tabla.
 render_mpl_table(resultados, header_columns=0, col_width=6.2)
 
-#%% Genero el mejor arbol a nuestro criterio.
+# Genero el mejor arbol a nuestro criterio.
 arbol = DecisionTreeClassifier(criterion='entropy', max_depth= 10) 
 arbol.fit(X_train, Y_train)
 

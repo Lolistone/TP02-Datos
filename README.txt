@@ -17,3 +17,11 @@ De la biblioteca scikit-learn será necesario importar los siguientes módulos c
 - from sklearn.metrics: accuracy_score, ConfusionMatrixDisplay
 
 ## Obs: En el archivo utils.py encontramos algunas funciones auxiliares.
+## Obs: Por algun motivo, al utilizar grillas en algunos gráfico (con Seaborn), se agregan grillas en graficos que no deberian.
+## Por lo tanto, dejo comentado las funciones que utilice para poner las grillas.
+
+## Como correr el código: 
+
+- Primero importamos las librerias, carpeta y datafrme. 
+- Luego, podemos ejecutar cada sección del codigo, dividida en Analisis Explotatorio, Clasificación binaria y Clasificacion multiclase
+- por separado, preferentemente, en el orden antes mencionado. 
