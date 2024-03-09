@@ -217,7 +217,7 @@ Al igual que cuando testeamos la performance en función de la cantidad de atrib
 En esta sección, se intentará encontrar un modelo de árbol de decisión que prediga las vocales. Para esto, armaremos un dataset a partir del original el cual contenga unicamente estas. \vspace{0.05cm}
 
 A fin de encontrar el mejor modelo, realizamos distintas pruebas modificando los paramentros del modelo. En primer lugar, lo que hicimos fue testear alturas
-entre 1 y 14. Para esto, utilizamos dos métodos, por un lado dividimos el el dataset original en train, validation y test, para luego entrenar
+entre 1 y 14. Para esto, utilizamos dos métodos, por un lado dividimos  el dataset original en train, validation y test, para luego entrenar
 el modelo con los datos de train y medirlo contra los datos de validation. 
 
 \begin{figure}[h]
@@ -262,7 +262,7 @@ En la imagen a continuación, la cual corresponde al Grid Search, podemos notar,
 
 \subsection{Conclusión}
 
-Para encontrar el mejor modelos, comenzamos testeando con el metodo de Kfold Cross Validation diferentes alturas, donde notamos que a partir de una altura 10 casi no variaba la precision de nuestro modelo. Luego, con esta información realizamos un Grid Search que incluia alturas entre 10 y 14 además de los criterios entropy y gini. A partir de este pudimos conlcuir que el modelo final es un árbol de altura 10 con el criterio entropia, el cual testeamos poniendo a prueba el modelo frente a los datos de test que separamos al principio de todo el proceso. En la página a continuación mostramos la matriz de confusión y los resultados finales.
+Para encontrar el mejor modelo, comenzamos testeando con el metodo de Kfold Cross Validation diferentes alturas, donde notamos que a partir de una altura 10 casi no variaba la precision de nuestro modelo. Luego, con esta información realizamos un Grid Search que incluia alturas entre 10 y 14 además de los criterios entropy y gini. A partir de este pudimos conlcuir que el modelo final es un árbol de altura 10 con el criterio entropia, el cual testeamos poniendo a prueba el modelo frente a los datos de test que separamos al principio de todo el proceso. En la página a continuación mostramos la matriz de confusión y los resultados finales.
 
 \newpage
 
