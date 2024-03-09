@@ -161,10 +161,6 @@ Una vez, que conocemos bastante acerca de nuestro dataset, estamos en condicione
 
 Una observación, para tener un gráfico mas confiable, lo que hicimos fue realizar la prueba de precisión una cierta cantidad de veces, tomando en cada iteracion pixeles al azar, para luego tomar su promedio, de esta manera garantizamos cierta aleatoreidad.
 
-\subsection{Conclusiones Clasificación Binaria}
-
-Pudimos destacar la importancia de comenzar con un analisis exploratorio de los datos correspondientes a las letras L y A, lo que nos permitió notar y diferenciar aquellos pixeles que presentan mayor varianza entre las dos letras, para luego mejorar la performance utilizando estos atributos. Una vez hecho esto, tambien observamos que la perfomance baja al aumentar la cantidad de vecinos. Por lo tanto, podemos concluir que tomando un modelo que tenga entre 3 y 10 pixeles con alta varianza y con k = 1, tendriamos un modelo eficiente con una perfomance aproximada de $0.99$. 
-
 \newpage
 
 Como se puede apreciar en la imagen anterior, la precisión aumenta de manera notable a partir de los 3 pixeles para luego estabilizarse alrededor de los 7.
@@ -205,6 +201,10 @@ Veamos tambien, un caso con mas pixeles a ver que ocurre
 \end{figure}
 
 Al igual que cuando testeamos la performance en función de la cantidad de atributos, cuando hicimos la prueba con 3 y 10 pixeles aleatorios, la repetimos una cierta cantidad de veces y obtuvimos su promedio, con el cual realizamos los gráficos anteriores.
+
+\subsection{Conclusiones Clasificación Binaria}
+
+Pudimos destacar la importancia de comenzar con un analisis exploratorio de los datos correspondientes a las letras L y A, lo que nos permitió notar y diferenciar aquellos pixeles que presentan mayor varianza entre las dos letras, para luego mejorar la performance del modelo con una cantidad reducidad de datos. Una vez hecho esto, tambien observamos que la perfomance, en nuestras pruebas, baja al aumentar la cantidad de vecinos. Por lo tanto, podemos concluir que tomando un modelo que tenga entre 3 y 10 pixeles con alta varianza y con k = 1, tendriamos un modelo eficiente con una perfomance aproximada de $0.99$. 
 
 \newpage
 
