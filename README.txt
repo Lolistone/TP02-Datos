@@ -1,4 +1,4 @@
-## Trabajo Práctico 02: Clasificación y validación cruzada
+## MNIST Classifier
 
 ## Bibliotecas necesarias:
 
