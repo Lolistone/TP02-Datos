@@ -1,4 +1,4 @@
-# Trabajo Práctico 02: Clasificación y validación cruzada
+## Trabajo Práctico 02: Clasificación y validación cruzada
 
 ## Bibliotecas necesarias:
 
